@@ -1,0 +1,12 @@
+.tamOrderBook {
+  width: 320px;
+  height: 800px;
+}
+
+.tamOrderBook svg {
+  width: 12px;
+}
+
+.tamOrderBook-title {
+  white-space: nowrap;
+}
