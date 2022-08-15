@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { RootStore } from "./RootStore";
-import { ITokenPairInfo } from "../dtos";
+import { ITokenPairInfo, ITokenPair } from "../dtos";
 
 export class ConnectionStore {
   private _ws?: WebSocket;
@@ -37,6 +37,18 @@ export class ConnectionStore {
         } else if (msg.type === "tokenPrices") {
           console.log(`Token prices received`);
           this._rootStore.updatePrices(msg.data);
+          const selectedTokenPair =
+            this._rootStore.tokenSelector.selectedTokenPair;
+          if (selectedTokenPair) {
+            const tokenPair: ITokenPair = {
+              baseToken: selectedTokenPair.baseToken,
+              quoteToken: selectedTokenPair.quoteToken,
+            };
+            this._ws?.send(JSON.stringify({ type: "orderBook", tokenPair }));
+          }
+        } else if (msg.type === "orderBook") {
+          console.log(`Order book received`);
+          this._rootStore.updateOrderBook(msg.data);
         }
       };
       this._ws.onerror = () => {

@@ -6,3 +6,4 @@ export * from "./TokenPairInfo";
 export * from "./ConnectionStore";
 export * from "./OrderFormStore";
 export * from "./NumericField";
+export * from "./OrderBookStore";

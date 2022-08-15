@@ -4,8 +4,9 @@ import { TokenPair } from "./TokenPair";
 import { TokenPairInfo } from "./TokenPairInfo";
 import { TokenSelectorStore } from "./TokenSelectorStore";
 import { ConnectionStore } from "./ConnectionStore";
-import { ITokenPair, ITokenPrice } from "../dtos";
+import { IOrderBook, IPriceLevel, ITokenPair, ITokenPrice } from "../dtos";
 import { OrderFormStore } from "./OrderFormStore";
+import { OrderBookStore } from "./OrderBookStore";
 
 export class RootStore {
   public readonly tokens = observable.array<string>(tokens);
@@ -16,6 +17,7 @@ export class RootStore {
   public readonly tokenSelector: TokenSelectorStore;
   public readonly connection: ConnectionStore;
   public readonly orderForm: OrderFormStore;
+  public readonly orderBook: OrderBookStore;
 
   constructor() {
     makeObservable(this, {
@@ -26,6 +28,7 @@ export class RootStore {
     this.tokenSelector = new TokenSelectorStore(this);
     this.connection = new ConnectionStore(this);
     this.orderForm = new OrderFormStore(this);
+    this.orderBook = new OrderBookStore();
   }
 
   public get tokenPairInfos(): TokenPairInfo[] {
@@ -73,5 +76,9 @@ export class RootStore {
       tpi.updatePrice(price, priceUsd);
     }
     setTimeout(this.connection.requestPrices, 1000);
+  }
+
+  public updateOrderBook(orderBook: IOrderBook) {
+    this.orderBook.update(orderBook);
   }
 }

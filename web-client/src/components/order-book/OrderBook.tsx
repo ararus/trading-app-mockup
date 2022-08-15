@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useMemo } from "react";
 import {
   Card,
   FlexItem,
@@ -23,36 +23,14 @@ import {
 } from "@jpmorganchase/uitk-icons";
 import { GridList, IGridListCellProps, IGridListColumn } from "../common";
 import cn from "classnames";
+import { useStore } from "../../store";
+import { IPriceLevel } from "../../dtos";
 
 const withBaseName = makePrefixer("tamOrderBook");
 
 export interface IOrderBookProps {}
 
 const dropdownSource = ["0.00001", "0.000001", "0.0000001", "0.00000001"];
-
-interface IPriceLevel {
-  price: number;
-  amount: number;
-  total: number;
-}
-
-const dummyData: IPriceLevel[] = [
-  {
-    price: 1.00001,
-    amount: 123456,
-    total: 0.12345,
-  },
-  {
-    price: 1.00001,
-    amount: 123456,
-    total: 0.12345,
-  },
-  {
-    price: 1.00001,
-    amount: 123456,
-    total: 0.12345,
-  },
-];
 
 function cell<T>(className: string, getter: (dataItem: T) => ReactNode) {
   return (props: IGridListCellProps<T>) => {
@@ -66,45 +44,57 @@ const BuyPriceCell = cell<IPriceLevel>("buyPrice", (x) => x.price.toFixed(9));
 const AmountCell = cell<IPriceLevel>("amount", (x) => x.amount.toFixed(2));
 const TotalCell = cell<IPriceLevel>("total", (x) => x.total.toFixed(7));
 
-const sellColumns: IGridListColumn<IPriceLevel>[] = [
-  {
-    header: "Price BTC",
-    cellComponent: SellPriceCell,
-    width: "130px",
-  },
-  {
-    header: "Amount ACA",
-    cellComponent: AmountCell,
-    width: "auto",
-  },
-  {
-    header: "Total BTC",
-    cellComponent: TotalCell,
-    width: "auto",
-  },
-];
-
-const buyColumns: IGridListColumn<IPriceLevel>[] = [
-  { ...sellColumns[0], cellComponent: BuyPriceCell },
-  ...sellColumns.slice(1),
-];
-
-export interface ILastPricePanelProps {}
+export interface ILastPricePanelProps {
+  lastPrice: number;
+  lastPriceUsd: number;
+  change: number;
+}
 
 export const LastPricePanel: FC<ILastPricePanelProps> = (props) => {
+  const { lastPrice, lastPriceUsd, change } = props;
   return (
     <div className={withBaseName("lastPricePanel")}>
       <LabelCaption>Last price</LabelCaption>
       <LabelCaption>USD</LabelCaption>
       <LabelCaption>Change</LabelCaption>
-      <div>12345</div>
-      <div>123</div>
-      <div>123%</div>
+      <div>{lastPrice.toFixed(9)}</div>
+      <div>{lastPriceUsd.toFixed(9)}</div>
+      <div>{change.toFixed(4)}</div>
     </div>
   );
 };
 
 export const OrderBook: FC<IOrderBookProps> = observer((props) => {
+  const { orderBook, tokenSelector } = useStore();
+  const { selectedTokenPair } = tokenSelector;
+
+  const [sellColumns, buyColumns] = useMemo(() => {
+    const sellColumns: IGridListColumn<IPriceLevel>[] = [
+      {
+        header: `Price ${selectedTokenPair?.baseToken}`,
+        cellComponent: SellPriceCell,
+        width: "130px",
+      },
+      {
+        header: `Amount ${selectedTokenPair?.quoteToken}`,
+        cellComponent: AmountCell,
+        width: "auto",
+      },
+      {
+        header: `Total ${selectedTokenPair?.baseToken}`,
+        cellComponent: TotalCell,
+        width: "auto",
+        textAlign: "right",
+      },
+    ];
+
+    const buyColumns: IGridListColumn<IPriceLevel>[] = [
+      { ...sellColumns[0], cellComponent: BuyPriceCell },
+      ...sellColumns.slice(1),
+    ];
+    return [sellColumns, buyColumns];
+  }, [selectedTokenPair]);
+
   return (
     <Card className={withBaseName()}>
       <FlexLayout direction={"column"} className={withBaseName("content")}>
@@ -136,13 +126,26 @@ export const OrderBook: FC<IOrderBookProps> = observer((props) => {
           </FlexLayout>
         </FlexItem>
         <FlexItem grow={1} className={withBaseName("sellLayout")}>
-          <GridList data={dummyData} columns={sellColumns} />
+          <GridList
+            data={orderBook.sellLevels}
+            columns={sellColumns}
+            className={withBaseName("sellGridList")}
+          />
         </FlexItem>
         <FlexItem>
-          <LastPricePanel />
+          <LastPricePanel
+            lastPrice={orderBook.lastPrice}
+            lastPriceUsd={orderBook.lastPriceUsd}
+            change={orderBook.change}
+          />
         </FlexItem>
-        <FlexItem grow={1}>
-          <GridList data={dummyData} columns={buyColumns} showHeader={false} />
+        <FlexItem grow={1} className={withBaseName("buyLayout")}>
+          <GridList
+            data={orderBook.buyLevels}
+            columns={buyColumns}
+            showHeader={false}
+            className={withBaseName("buyGridList")}
+          />
         </FlexItem>
       </FlexLayout>
     </Card>

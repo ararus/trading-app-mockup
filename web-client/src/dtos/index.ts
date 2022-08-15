@@ -15,3 +15,17 @@ export interface ITokenPrice {
   token: string;
   priceUsd: number;
 }
+
+export interface IPriceLevel {
+  price: number;
+  amount: number;
+  total: number;
+}
+
+export interface IOrderBook {
+  buyLevels: IPriceLevel[];
+  sellLevels: IPriceLevel[];
+  lastPrice: number;
+  lastPriceUsd: number;
+  change: number;
+}

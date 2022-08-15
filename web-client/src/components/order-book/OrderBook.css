@@ -4,12 +4,25 @@
 
 .tamOrderBook-content {
   width: 320px;
-  height: 800px;
+  /*height: 800px;*/
 }
 
 .tamOrderBook-sellLayout {
   display: flex;
   flex-direction: column-reverse;
+  height: 400px;
+}
+
+.tamOrderBook-buyLayout {
+  height: 400px;
+}
+
+.tamOrderBook-sellGridList {
+  max-height: 400px;
+}
+
+.tamOrderBook-buyGridList {
+  max-height: 400px;
 }
 
 .tamOrderBook svg {
@@ -33,7 +46,7 @@
 }
 
 .tamOrderBook-total {
-
+  text-align: right;
 }
 
 .tamOrderBook-lastPricePanel {
