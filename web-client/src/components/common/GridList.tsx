@@ -30,6 +30,8 @@ export interface IGridListProps<T> {
   data: T[];
   columns: IGridListColumn<T>[];
   onRowClick?: (rowIndex: number) => void;
+  className?: string;
+  showHeader?: boolean;
 }
 
 const withBaseName = makePrefixer("tamGridList");
@@ -55,32 +57,30 @@ const HeaderCell = forwardRef<HTMLDivElement, IHeaderCellProps>(
   }
 );
 
-interface ICellWrapperProps {
+interface ICellProps {
   isHoverOver: boolean;
   rowIndex: number;
   children: ReactNode;
 }
 
-const CellWrapper = forwardRef<HTMLDivElement, ICellWrapperProps>(
-  (props, ref) => {
-    return (
-      <div
-        ref={ref}
-        data-row-index={props.rowIndex}
-        className={cn(withBaseName("cellWrapper"), {
-          [withBaseName("hover")]: props.isHoverOver,
-        })}
-      >
-        {props.children}
-      </div>
-    );
-  }
-);
+const Cell = forwardRef<HTMLDivElement, ICellProps>((props, ref) => {
+  return (
+    <div
+      ref={ref}
+      data-row-index={props.rowIndex}
+      className={cn(withBaseName("cell"), {
+        [withBaseName("hover")]: props.isHoverOver,
+      })}
+    >
+      {props.children}
+    </div>
+  );
+});
 
 export const GridList = observer(function GridList<T>(
   props: IGridListProps<T>
 ) {
-  const { data, columns } = props;
+  const { data, columns, className, showHeader = true } = props;
   const columnCount = columns.length;
 
   const [cellRefs, headerRefs] = useMemo(() => {
@@ -104,7 +104,7 @@ export const GridList = observer(function GridList<T>(
   }, [columns]);
 
   useEffect(() => {
-    const isBodyRendered = cellRefs.every((r) => !!r.current);
+    const isBodyRendered = headerRefs.every((r) => !!r.current);
     if (isBodyRendered) {
       for (let i = 0; i < columnCount; ++i) {
         headerRefs[i].current!.style.width = `${
@@ -137,20 +137,22 @@ export const GridList = observer(function GridList<T>(
   };
 
   return (
-    <div className={withBaseName()}>
-      <div className={withBaseName("header")}>
-        {columns.map((column, columnIndex) => {
-          return (
-            <HeaderCell
-              key={columnIndex}
-              ref={headerRefs[columnIndex]}
-              column={column}
-            >
-              {column.header}
-            </HeaderCell>
-          );
-        })}
-      </div>
+    <div className={cn(withBaseName(), className)}>
+      {showHeader ? (
+        <div className={withBaseName("header")}>
+          {columns.map((column, columnIndex) => {
+            return (
+              <HeaderCell
+                key={columnIndex}
+                ref={headerRefs[columnIndex]}
+                column={column}
+              >
+                {column.header}
+              </HeaderCell>
+            );
+          })}
+        </div>
+      ) : null}
       <div className={withBaseName("body")}>
         <div
           className={withBaseName("contentContainer")}
@@ -164,26 +166,28 @@ export const GridList = observer(function GridList<T>(
               <div key={`Measure_${columnIndex}`} ref={cellRefs[columnIndex]} />
             );
           })}
-          {columns.map((column, columnIndex) => {
-            return (
-              <HeaderCell key={columnIndex} column={column}>
-                {column.header}
-              </HeaderCell>
-            );
-          })}
+          {showHeader
+            ? columns.map((column, columnIndex) => {
+                return (
+                  <HeaderCell key={columnIndex} column={column}>
+                    {column.header}
+                  </HeaderCell>
+                );
+              })
+            : null}
           {data.map((dataItem, rowIndex) => {
             return (
               <Fragment key={rowIndex}>
                 {columns.map((column, columnIndex) => {
                   const CellComponent = column.cellComponent;
                   return (
-                    <CellWrapper
+                    <Cell
                       rowIndex={rowIndex}
                       key={[rowIndex, columnIndex].join("_")}
                       isHoverOver={rowIndex === hoverRowIndex}
                     >
                       <CellComponent rowIndex={rowIndex} dataItem={dataItem} />
-                    </CellWrapper>
+                    </Cell>
                   );
                 })}
               </Fragment>

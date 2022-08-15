@@ -1,6 +1,15 @@
 .tamOrderBook {
+
+}
+
+.tamOrderBook-content {
   width: 320px;
   height: 800px;
+}
+
+.tamOrderBook-sellLayout {
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .tamOrderBook svg {
@@ -9,4 +18,27 @@
 
 .tamOrderBook-title {
   white-space: nowrap;
+}
+
+.tamOrderBook-sellPrice {
+  color: var(--uitk-color-red-600);
+}
+
+.tamOrderBook-buyPrice {
+  color: var(--uitk-color-green-600);
+}
+
+.tamOrderBook-amount {
+
+}
+
+.tamOrderBook-total {
+
+}
+
+.tamOrderBook-lastPricePanel {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  border: solid 1px var(--uitk-container-borderColor-high);
+  padding: var(--uitk-size-unit);
 }

@@ -1,14 +1,16 @@
 import { observer } from "mobx-react-lite";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import {
   Card,
   FlexItem,
   FlexLayout,
   makePrefixer,
+  Panel,
 } from "@jpmorganchase/uitk-core";
 import "./OrderBook.css";
 import {
   Dropdown,
+  LabelCaption,
   Text,
   ToggleButton,
   ToggleButtonGroup,
@@ -20,6 +22,7 @@ import {
   SwapIcon,
 } from "@jpmorganchase/uitk-icons";
 import { GridList, IGridListCellProps, IGridListColumn } from "../common";
+import cn from "classnames";
 
 const withBaseName = makePrefixer("tamOrderBook");
 
@@ -51,25 +54,55 @@ const dummyData: IPriceLevel[] = [
   },
 ];
 
-// const PriceCell: FC<IGridListCellProps<IPriceLevel> = observer((props) => {
-//   return <Cell class
-// })
-//
-// const columns: IGridListColumn<IPriceLevel>[] = [
-//   {
-//     header: "Price BTC",
-//     cellComponent: PriceCell,
-//     width: "130px",
-//   }, {
-//     header: "Amount ACA",
-//     cellComponent: AmountCell,
-//     width: "auto",
-//   }, {
-//     header: "Total BTC",
-//     cellComponent: TotalCell,
-//     width: "auto"
-//   }
-// ];
+function cell<T>(className: string, getter: (dataItem: T) => ReactNode) {
+  return (props: IGridListCellProps<T>) => {
+    const value = getter(props.dataItem);
+    return <div className={withBaseName(className)}>{value}</div>;
+  };
+}
+
+const SellPriceCell = cell<IPriceLevel>("sellPrice", (x) => x.price.toFixed(9));
+const BuyPriceCell = cell<IPriceLevel>("buyPrice", (x) => x.price.toFixed(9));
+const AmountCell = cell<IPriceLevel>("amount", (x) => x.amount.toFixed(2));
+const TotalCell = cell<IPriceLevel>("total", (x) => x.total.toFixed(7));
+
+const sellColumns: IGridListColumn<IPriceLevel>[] = [
+  {
+    header: "Price BTC",
+    cellComponent: SellPriceCell,
+    width: "130px",
+  },
+  {
+    header: "Amount ACA",
+    cellComponent: AmountCell,
+    width: "auto",
+  },
+  {
+    header: "Total BTC",
+    cellComponent: TotalCell,
+    width: "auto",
+  },
+];
+
+const buyColumns: IGridListColumn<IPriceLevel>[] = [
+  { ...sellColumns[0], cellComponent: BuyPriceCell },
+  ...sellColumns.slice(1),
+];
+
+export interface ILastPricePanelProps {}
+
+export const LastPricePanel: FC<ILastPricePanelProps> = (props) => {
+  return (
+    <div className={withBaseName("lastPricePanel")}>
+      <LabelCaption>Last price</LabelCaption>
+      <LabelCaption>USD</LabelCaption>
+      <LabelCaption>Change</LabelCaption>
+      <div>12345</div>
+      <div>123</div>
+      <div>123%</div>
+    </div>
+  );
+};
 
 export const OrderBook: FC<IOrderBookProps> = observer((props) => {
   return (
@@ -102,7 +135,15 @@ export const OrderBook: FC<IOrderBookProps> = observer((props) => {
             </FlexItem>
           </FlexLayout>
         </FlexItem>
-        {/*<GridList data={dummyData} columns={columns} />*/}
+        <FlexItem grow={1} className={withBaseName("sellLayout")}>
+          <GridList data={dummyData} columns={sellColumns} />
+        </FlexItem>
+        <FlexItem>
+          <LastPricePanel />
+        </FlexItem>
+        <FlexItem grow={1}>
+          <GridList data={dummyData} columns={buyColumns} showHeader={false} />
+        </FlexItem>
       </FlexLayout>
     </Card>
   );

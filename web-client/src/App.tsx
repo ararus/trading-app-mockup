@@ -2,6 +2,7 @@ import React from "react";
 import {
   BorderItem,
   BorderLayout,
+  Card,
   FlexItem,
   FlexLayout,
   ToolkitProvider,
@@ -17,9 +18,9 @@ function App() {
   return (
     <ToolkitProvider density={"high"} theme={"light"}>
       <StoreProvider>
-        <BorderLayout gap={2}>
+        <BorderLayout gap={2} className={"tamApp"}>
           <BorderItem position={"header"}>
-            <div>HEADER</div>
+            <Card>HEADER</Card>
           </BorderItem>
           <BorderItem position={"right"}>
             <OrderForm />

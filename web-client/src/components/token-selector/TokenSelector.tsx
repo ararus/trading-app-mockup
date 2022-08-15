@@ -47,14 +47,6 @@ export interface ICellProps {
   children: ReactNode;
 }
 
-export const Cell: FC<ICellProps> = (props) => {
-  return (
-    <div className={cn(withBaseName("cell"), props.className)}>
-      {props.children}
-    </div>
-  );
-};
-
 const TokenPairCell: FC<IGridListCellProps<TokenPairInfo>> = observer(
   (props) => {
     const { tokenPair, isFavorite } = props.dataItem;
@@ -71,14 +63,14 @@ const TokenPairCell: FC<IGridListCellProps<TokenPairInfo>> = observer(
     };
 
     return (
-      <Cell className={withBaseName("tokenPair")}>
+      <div className={withBaseName("tokenPair")}>
         <FlexLayout align={"center"} gap={1}>
           <Button variant={"secondary"} onClick={onToggleFavorite}>
             <Icon className={withBaseName("favoriteIcon")} />
           </Button>
           {tokenPair.name}
         </FlexLayout>
-      </Cell>
+      </div>
     );
   }
 );
@@ -87,14 +79,14 @@ const LastPriceCell: FC<IGridListCellProps<TokenPairInfo>> = observer(
   (props) => {
     const { lastPrice, lastPriceUsd } = props.dataItem;
     return (
-      <Cell className={withBaseName("lastPriceCell")}>
+      <div className={withBaseName("lastPriceCell")}>
         <span className={withBaseName("lastPrice")}>
           {lastPrice.toFixed(3)}
         </span>
         <span className={withBaseName("lastPriceUsd")}>
           {` / $${lastPriceUsd.toFixed(2)}`}
         </span>
-      </Cell>
+      </div>
     );
   }
 );
@@ -102,14 +94,14 @@ const LastPriceCell: FC<IGridListCellProps<TokenPairInfo>> = observer(
 const ChangeCell: FC<IGridListCellProps<TokenPairInfo>> = observer((props) => {
   const { change24h } = props.dataItem;
   return (
-    <Cell
+    <div
       className={cn(withBaseName("change"), {
         [withBaseName("positiveChange")]: change24h >= 0,
         [withBaseName("negativeChange")]: change24h < 0,
       })}
     >
       {`${(change24h * 100).toFixed(2)}%`}
-    </Cell>
+    </div>
   );
 });
 
@@ -210,7 +202,6 @@ export const TokenSelector: FC<ITokenSelectorProps> = observer((props) => {
                 top: y ?? "",
                 left: x ?? "",
                 position: strategy,
-                maxHeight: 600,
               }}
             >
               <FlexLayout
@@ -245,6 +236,7 @@ export const TokenSelector: FC<ITokenSelectorProps> = observer((props) => {
                 </FlexItem>
                 <FlexItem grow={1}>
                   <GridList
+                    className={withBaseName("gridList")}
                     data={filteredPairs}
                     columns={gridListColumns}
                     onRowClick={onRowClick}

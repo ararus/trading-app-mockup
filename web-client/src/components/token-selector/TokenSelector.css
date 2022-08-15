@@ -8,19 +8,13 @@
 
 .tamTokenSelector-popup {
   --tamTokenSelector-padding: calc(var(--uitk-size-unit) * 3);
-
-  width: 350px;
-  height: 600px;
   position: relative;
   z-index: calc(var(--uitk-zIndex-tooltip) - 1);
 }
 
 .tamTokenSelector-popupContent {
-  position: absolute;
-  top: var(--tamTokenSelector-padding);
-  right: var(--tamTokenSelector-padding);
-  bottom: var(--tamTokenSelector-padding);
-  left: var(--tamTokenSelector-padding);
+  width: 350px;
+  position: relative;
 }
 
 .tamTokenSelector-searchIcon svg {
@@ -28,14 +22,8 @@
   margin-top: 4px;
 }
 
-.tamTokenSelector-cell {
-  border-color: var(--uitk-separable-primary-borderColor);
-  border-style: solid;
-  border-width: 0 0 1px 0;
-  height: var(--uitk-size-stackable);
-  line-height: var(--uitk-size-stackable);
-  padding: 0 var(--uitk-size-unit);
-  white-space: nowrap;
+.tamTokenSelector-gridList {
+  max-height: 600px;
 }
 
 .tamTokenSelector-favoriteIcon {
