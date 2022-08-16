@@ -10,6 +10,7 @@ import * as uuid from "uuid";
 import { WebSocket } from "ws";
 import { DummyServer } from "./fakeData";
 import { Subscription } from "rxjs";
+import { IStreamReply, IStreamRequest } from "./dtos";
 
 const koaValidator = require("koa-async-validator");
 
@@ -24,9 +25,8 @@ app.use(koaLogger());
 app.use(route.get("/healthcheck", (ctx) => (ctx.body = "OK")));
 
 const dummy = new DummyServer();
-let tokenPairsSub: Subscription;
-let pricesSub: Subscription;
-let orderBookSub: Subscription;
+
+const subscriptions = new Map<string, Subscription>();
 
 // WS routes
 app.ws.use(
@@ -35,40 +35,51 @@ app.ws.use(
       console.log(`Client connected`);
       ctx.websocket.on("message", (rawMessage: any) => {
         const message = JSON.parse(rawMessage);
-        if (message.hasOwnProperty("subscribe")) {
-          if (message.subscribe === "tokenPairs") {
-            tokenPairsSub = dummy.getTokenPairs().subscribe((tokenPairs) => {
-              ctx.websocket.send(
-                JSON.stringify({ type: "tokenPairs", data: tokenPairs })
-              );
-            });
-          } else if (message.subscribe === "tokenPrices") {
-            pricesSub = dummy.getPriceStream().subscribe((prices) => {
-              ctx.websocket.send(
-                JSON.stringify({ type: "tokenPrices", data: prices })
-              );
-            });
-          } else if (message.subscribe === "orderBook") {
-            orderBookSub = dummy
-              .getOrderBook(message.tokenPair, message.priceLevelSize)
-              .subscribe((orderBook) => {
+
+        if (message.type === "unsubscribe") {
+          subscriptions.get(message.key)!.unsubscribe();
+        } else {
+          if (message.name === "tokenPairs") {
+            subscriptions.set(
+              message.key,
+              dummy.getTokenPairs().subscribe((tokenPairs) => {
                 ctx.websocket.send(
                   JSON.stringify({
-                    type: "orderBook",
-                    tokenPair: message.tokenPair,
-                    priceLevelSize: message.priceLevelSize,
-                    data: orderBook,
+                    type: "tokenPairs",
+                    key: message.key,
+                    data: tokenPairs,
                   })
                 );
-              });
-          }
-        } else if (message.hasOwnProperty("unsubscribe")) {
-          if (message.unsubscribe === "tokenPairs") {
-            tokenPairsSub.unsubscribe();
-          } else if (message.unsubscribe === "tokenPrices") {
-            pricesSub.unsubscribe();
-          } else if (message.unsubscribe === "orderBook") {
-            orderBookSub.unsubscribe();
+              })
+            );
+          } else if (message.name === "tokenPrices") {
+            subscriptions.set(
+              message.key,
+              dummy.getPriceStream().subscribe((prices) => {
+                ctx.websocket.send(
+                  JSON.stringify({
+                    type: "tokenPrices",
+                    key: message.key,
+                    data: prices,
+                  })
+                );
+              })
+            );
+          } else if (message.name === "orderBook") {
+            subscriptions.set(
+              message.key,
+              dummy.getOrderBook
+                .apply(dummy, message.data)
+                .subscribe((orderBook) => {
+                  ctx.websocket.send(
+                    JSON.stringify({
+                      type: "orderBook",
+                      key: message.key,
+                      data: orderBook,
+                    })
+                  );
+                })
+            );
           }
         }
       });
