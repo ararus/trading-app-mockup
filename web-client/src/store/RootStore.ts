@@ -75,7 +75,6 @@ export class RootStore {
       const price = priceUsd / m.get(tpi.tokenPair.quoteToken)!;
       tpi.updatePrice(price, priceUsd);
     }
-    setTimeout(this.connection.requestPrices, 1000);
   }
 
   public updateOrderBook(orderBook: IOrderBook) {

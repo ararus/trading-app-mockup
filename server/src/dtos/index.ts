@@ -29,3 +29,9 @@ export interface IOrderBook {
   lastPriceUsd: number;
   change: number;
 }
+
+export interface IOrderBookMessage {
+  type: "orderBook";
+  tokenPair: string;
+  priceLevelSize: number;
+}
