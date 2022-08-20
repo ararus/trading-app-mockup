@@ -16,6 +16,7 @@ import { OrderBook } from "./components/order-book";
 import { OpenOrders } from "./components/open-orders/OpenOrders";
 import { observer } from "mobx-react-lite";
 import { ThemeSwitcher } from "./components/theme-switcher/ThemeSwitcher";
+import { Connection } from "./components/connection";
 
 const App = observer(function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -27,8 +28,9 @@ const App = observer(function App() {
           <BorderLayout gap={2} className={"tamApp-layout"}>
             <BorderItem position={"header"}>
               <Card>
-                <FlexLayout>
+                <FlexLayout separators>
                   <ThemeSwitcher theme={theme} setTheme={setTheme} />
+                  <Connection />
                 </FlexLayout>
               </Card>
             </BorderItem>

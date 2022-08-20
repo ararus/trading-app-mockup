@@ -14,6 +14,7 @@ export interface MiddlePartProps<T> {
   rows: TableRowModel[];
   hoverOverRowKey?: string;
   setHoverOverRowKey: (key: string | undefined) => void;
+  midGap: number;
 }
 
 export function MiddlePart<T>(props: MiddlePartProps<T>) {
@@ -24,18 +25,20 @@ export function MiddlePart<T>(props: MiddlePartProps<T>) {
     rows,
     hoverOverRowKey,
     setHoverOverRowKey,
+    midGap,
   } = props;
 
   return (
     <div ref={middleRef} className={withBaseName()}>
       <div className={withBaseName("space")}>
         <table onWheel={onWheel}>
-          <TableColGroup columns={columns} />
+          <TableColGroup columns={columns} gap={midGap} />
           <TableBody
             columns={columns}
             rows={rows}
             hoverRowKey={hoverOverRowKey}
             setHoverRowKey={setHoverOverRowKey}
+            gap={midGap}
           />
         </table>
       </div>

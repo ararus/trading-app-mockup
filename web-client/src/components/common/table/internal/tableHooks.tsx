@@ -134,7 +134,7 @@ export const useVisibleRowRange = (
   }, [scrollTop, clientMidHeight, rowHeight, rowCount]);
   if (!Rng.equals(prevRef.current, range)) {
     prevRef.current = range;
-    console.log(`RowRange: ${range}`);
+    // console.log(`RowRange: ${range}`);
   }
   return prevRef.current;
 };

@@ -1,7 +1,7 @@
 import { Card, makePrefixer } from "@jpmorganchase/uitk-core";
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { ColumnGroup, RowSelectionColumn, Table, TableColumn } from "../common";
+import { RowSelectionColumn, Table, TableColumn } from "../common";
 import { useStore } from "../../store";
 import { OpenOrder } from "../../store/OpenOrdersStore";
 import "./OpenOrders.css";
@@ -17,7 +17,6 @@ export const OpenOrders: FC<IOpenOrdersProps> = observer((props) => {
 
   const data = [...openOrders.orders]; // TODO
 
-  // console.log(`RENDER OpenOrders with ${openOrders.orders.length} openOrders`);
   return (
     <Card className={withBaseName()}>
       <Table
@@ -44,6 +43,25 @@ export const OpenOrders: FC<IOpenOrdersProps> = observer((props) => {
           width={100}
           getValue={(x) => x.price}
         />
+        <TableColumn
+          id={"amount"}
+          name={"Amount"}
+          width={100}
+          getValue={(x) => x.amount}
+        />
+        <TableColumn
+          id={"failed"}
+          name={"Failed"}
+          width={100}
+          getValue={(x) => x.failed}
+        />
+        <TableColumn
+          id={"time"}
+          name={"Time"}
+          width={100}
+          getValue={(x) => x.time.toString()}
+        />
+        {/*<SpaceFillColumn id={"spaceFill"} />*/}
       </Table>
     </Card>
   );

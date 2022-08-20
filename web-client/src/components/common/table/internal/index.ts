@@ -14,3 +14,6 @@ export * from "./TopLeftPart";
 export * from "./TopPart";
 export * from "./TopRightPart";
 export * from "./utils";
+export * from "./FakeCell";
+export * from "./FakeGroupCell";
+export * from "./FakeHeaderCell";

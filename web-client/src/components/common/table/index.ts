@@ -11,4 +11,4 @@ export * from "./SizingContext";
 export * from "./Table";
 export * from "./TableColumn";
 export * from "./TableContext";
-export { RowSelectionColumn } from "./RowSelectionColumn";
+export * from "./RowSelectionColumn";

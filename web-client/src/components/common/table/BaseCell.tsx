@@ -4,7 +4,7 @@ import "./BaseCell.css";
 import { makePrefixer } from "@jpmorganchase/uitk-core";
 import { TableCellProps } from "./TableColumn";
 import { TableColumnModel } from "./Table";
-import { Cursor } from "./internal/Cursor";
+import { Cursor } from "./internal";
 
 const withBaseName = makePrefixer("uitkTableBaseCell");
 

@@ -5,6 +5,7 @@ import { makePrefixer } from "@jpmorganchase/uitk-core";
 import cn from "classnames";
 import { TableCellValueProps } from "../TableColumn";
 import { TableColumnModel, TableRowModel } from "../Table";
+import { FakeCell } from "./FakeCell";
 
 const withBaseName = makePrefixer("uitkTableTableRow");
 
@@ -17,6 +18,7 @@ export interface TableRowProps {
   cursorColKey?: string;
   onMouseEnter?: MouseEventHandler<HTMLTableRowElement>;
   onMouseLeave?: MouseEventHandler<HTMLTableRowElement>;
+  gap?: number;
 }
 
 const DefaultCellValue: FC<TableCellValueProps> = (props) => {
@@ -34,6 +36,7 @@ export const TableRow = function TableRow(props: TableRowProps) {
     onMouseEnter,
     onMouseLeave,
     cursorColKey,
+    gap,
   } = props;
 
   if (!row.key) {
@@ -75,6 +78,7 @@ export const TableRow = function TableRow(props: TableRowProps) {
           </Cell>
         );
       })}
+      {gap !== undefined && gap > 0 ? <FakeCell row={row} /> : null}
     </tr>
   );
 };

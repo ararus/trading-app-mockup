@@ -1,5 +1,5 @@
 import "./HeaderCell.css";
-import { ReactNode, useEffect, useLayoutEffect, useRef } from "react";
+import { ReactNode, useLayoutEffect, useRef } from "react";
 import { makePrefixer } from "@jpmorganchase/uitk-core";
 import cn from "classnames";
 import { ColumnSeparatorType, TableColumnModel } from "./Table";

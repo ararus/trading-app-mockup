@@ -31,7 +31,7 @@
   line-height: var(--uitk-size-stackable);
   padding: 0 var(--uitk-size-unit);
   font-size: var(--uitk-text-caption-fontSize);
-  color: var(--uitk-palette-interact-secondary-foreground);
+  color: var(--uitk-text-secondary-foreground);
   white-space: nowrap;
 }
 

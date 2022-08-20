@@ -18,15 +18,3 @@ export const RowSelectionColumn = (props: RowSelectionColumnProps) => {
     />
   );
 };
-
-export const SpaceFillColumn = () => {
-  const [width, setWidth] = useState<number>(100);
-  const onWidthChanged = (width: number) => setWidth(width);
-  return (
-    <TableColumn
-      id={"spaceFill"}
-      width={width}
-      onWidthChanged={onWidthChanged}
-    />
-  );
-};

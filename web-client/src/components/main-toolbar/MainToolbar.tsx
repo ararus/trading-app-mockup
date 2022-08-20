@@ -10,7 +10,6 @@ export const MainToolbar: FC<IMainToolbarProps> = (props) => {
     <Card>
       <FlexLayout direction={"row"}>
         <TokenSelector />
-        <Connection />
       </FlexLayout>
     </Card>
   );

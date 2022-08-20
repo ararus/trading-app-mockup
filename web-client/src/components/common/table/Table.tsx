@@ -5,6 +5,7 @@ import {
   ReactNode,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -14,19 +15,17 @@ import { makePrefixer } from "@jpmorganchase/uitk-core";
 import { TableColumnProps } from "./TableColumn";
 import { TableContext } from "./TableContext";
 import cx from "classnames";
-import { CellMeasure } from "./internal/CellMeasure";
-import { Scrollable } from "./internal/Scrollable";
-import "./Table.css";
-import { MiddlePart } from "./internal/MiddlePart";
-import { TopPart } from "./internal/TopPart";
-import { LeftPart } from "./internal/LeftPart";
-import { TopLeftPart } from "./internal/TopLeftPart";
-import { RightPart } from "./internal/RightPart";
-import { TopRightPart } from "./internal/TopRightPart";
-import { SelectionContext } from "./SelectionContext";
 import {
+  CellMeasure,
   clamp,
+  LeftPart,
+  MiddlePart,
   PAGE_SIZE,
+  RightPart,
+  Scrollable,
+  TopLeftPart,
+  TopPart,
+  TopRightPart,
   useBodyVisibleAreaTop,
   useBodyVisibleColumnRange,
   useClientMidHeight,
@@ -46,10 +45,12 @@ import {
   useSumWidth,
   useVisibleColumnGroupRange,
   useVisibleRowRange,
-} from "./internal/tableHooks";
+} from "./internal";
+import "./Table.css";
+import { SelectionContext } from "./SelectionContext";
 import { ColumnGroupProps } from "./ColumnGroup";
 import { SizingContext } from "./SizingContext";
-import { LayoutContext } from "./LayoutContext";
+import { LayoutContext } from "./LayoutContext"; // TODO remove
 
 const withBaseName = makePrefixer("uitkTable");
 
@@ -163,23 +164,23 @@ export const Table = (props: TableProps) => {
 
   const rowIdxByKey = useRowIdxByKey(rowKeyGetter, rowData);
 
-  const leftGrps = useColumnGroups(leftGrpPs, 0);
-  const midGrps = useColumnGroups(midGrpPs, leftGrps.length);
-  const rightGrps = useColumnGroups(
+  const leftGroups = useColumnGroups(leftGrpPs, 0);
+  const midGroups = useColumnGroups(midGrpPs, leftGroups.length);
+  const rightGroups = useColumnGroups(
     rightGrpPs,
-    leftGrps.length + midGrps.length
+    leftGroups.length + midGroups.length
   );
 
-  const leftCols: TableColumnModel[] = useCols(leftColPs, 0, leftGrps);
+  const leftCols: TableColumnModel[] = useCols(leftColPs, 0, leftGroups);
   const midCols: TableColumnModel[] = useCols(
     midColPs,
     leftCols.length,
-    midGrps
+    midGroups
   );
   const rightCols: TableColumnModel[] = useCols(
     rightColPs,
     leftCols.length + midCols.length,
-    rightGrps
+    rightGroups
   );
 
   const midColsById = useMemo(
@@ -187,23 +188,24 @@ export const Table = (props: TableProps) => {
     [midCols]
   );
 
-  const leftWh = useSumWidth(leftCols);
+  const leftWidth = useSumWidth(leftCols);
   const midWidth = useSumWidth(midCols);
-  const rightWh = useSumWidth(rightCols);
-  const totalWh = useSum([leftWh, midWidth, rightWh]);
+  const rightWidth = useSumWidth(rightCols);
+  const totalWidth = useSum([leftWidth, midWidth, rightWidth]);
 
   const hasColumnGroups =
-    leftGrps.length > 0 || midGrps.length > 0 || rightGrps.length > 0;
+    leftGroups.length > 0 || midGroups.length > 0 || rightGroups.length > 0;
 
   const headRowCount = hasColumnGroups ? 2 : 1; // TODO multiple group levels
   const rowCount = rowData.length;
   // console.log(`RowCount: ${rowCount}`);
   const botRowCount = 0; // TODO
-  const topHt = useProd([rowHeight, headRowCount]);
+  const topHeight = useProd([rowHeight, headRowCount]);
   const midHeight = useProd([rowHeight, rowCount]);
-  const botHt = useProd([botRowCount, rowHeight]);
-  const totalHt = useSum([topHt, midHeight, botHt]);
-  const clientMidWidth = useClientMidWidth(clientWidth, leftWh, rightWh);
+  const botHeight = useProd([botRowCount, rowHeight]);
+  const totalHeight = useSum([topHeight, midHeight, botHeight]);
+  const clientMidWidth = useClientMidWidth(clientWidth, leftWidth, rightWidth);
+  const midGap = Math.max(0, clientMidWidth - midWidth);
 
   const bodyVisColRng = useBodyVisibleColumnRange(
     midCols,
@@ -213,24 +215,24 @@ export const Table = (props: TableProps) => {
 
   const midGrpByColId = useMemo(() => {
     const m = new Map<string, TableColumnGroupModel>();
-    for (let g of midGrps) {
+    for (let g of midGroups) {
       for (let c of g.childrenIds) {
         m.set(c, g);
       }
     }
     return m;
-  }, [midGrps]);
+  }, [midGroups]);
 
   const visColGrpRng = useVisibleColumnGroupRange(
     bodyVisColRng,
     midCols,
     midGrpByColId,
-    leftGrps.length
+    leftGroups.length
   );
 
   const visColGrps = useMemo(() => {
-    return midGrps.slice(visColGrpRng.start, visColGrpRng.end);
-  }, [visColGrpRng, midGrps]);
+    return midGroups.slice(visColGrpRng.start, visColGrpRng.end);
+  }, [visColGrpRng, midGroups]);
 
   const headVisColRng = useHeadVisibleColumnRange(
     bodyVisColRng,
@@ -242,17 +244,21 @@ export const Table = (props: TableProps) => {
   const bodyScrOutColWh = useLeftScrolledOutWidth(midCols, bodyVisColRng);
   const headScrOutColWh = useLeftScrolledOutWidth(midCols, headVisColRng);
 
-  const bodyVisAreaLeft = useSum([leftWh, bodyScrOutColWh]);
-  const headVisAreaLeft = useSum([leftWh, headScrOutColWh]);
-  const clientMidHt = useClientMidHeight(clientHeight, topHt, botHt);
+  const bodyVisAreaLeft = useSum([leftWidth, bodyScrOutColWh]);
+  const headVisAreaLeft = useSum([leftWidth, headScrOutColWh]);
+  const clientMidHeight = useClientMidHeight(
+    clientHeight,
+    topHeight,
+    botHeight
+  );
   const visRowRng = useVisibleRowRange(
     scrollTop,
-    clientMidHt,
+    clientMidHeight,
     rowHeight,
     rowCount
   );
 
-  const bodyVisAreaTop = useBodyVisibleAreaTop(rowHeight, visRowRng, topHt);
+  const bodyVisAreaTop = useBodyVisibleAreaTop(rowHeight, visRowRng, topHeight);
 
   const bodyVisibleColumns = useColumnRange(midCols, bodyVisColRng);
   const headVisibleColumns = useColumnRange(midCols, headVisColRng);
@@ -263,25 +269,25 @@ export const Table = (props: TableProps) => {
   const style = useMemo(
     () =>
       ({
-        ["--uitkTable-totalWidth"]: `${totalWh}px`,
-        ["--uitkTable-totalHeight"]: `${totalHt}px`,
-        ["--uitkTable-topHeight"]: `${topHt}px`,
-        ["--uitkTable-leftWidth"]: `${leftWh}px`,
-        ["--uitkTable-rightWidth"]: `${rightWh}px`,
+        ["--uitkTable-totalWidth"]: `${totalWidth}px`,
+        ["--uitkTable-totalHeight"]: `${totalHeight}px`,
+        ["--uitkTable-topHeight"]: `${topHeight}px`,
+        ["--uitkTable-leftWidth"]: `${leftWidth}px`,
+        ["--uitkTable-rightWidth"]: `${rightWidth}px`,
         ["--uitkTable-bodyVisibleColumnWidth"]: `${bodyVisColWh}px`,
         ["--uitkTable-bodyVisibleAreaTop"]: `${bodyVisAreaTop}px`,
         ["--uitkTable-bodyVisibleAreaLeft"]: `${bodyVisAreaLeft}px`,
-        ["--uitkTable-bottomHeight"]: `${botHt}px`,
+        ["--uitkTable-bottomHeight"]: `${botHeight}px`,
         ["--uitkTable-headerVisibleColumnWidth"]: `${headVisColWh}px`,
         ["--uitkTable-headerVisibleAreaLeft"]: `${headVisAreaLeft}px`,
       } as any),
     [
-      totalHt,
-      totalWh,
-      topHt,
-      leftWh,
-      rightWh,
-      botHt,
+      totalHeight,
+      totalWidth,
+      topHeight,
+      leftWidth,
+      rightWidth,
+      botHeight,
       bodyVisColWh,
       bodyVisAreaLeft,
       bodyVisAreaTop,
@@ -334,6 +340,7 @@ export const Table = (props: TableProps) => {
     return m;
   };
   chPosById.current = indexChildren();
+
   const getChildIndex = (id: string): number => {
     const idx = chPosById.current.get(id);
     if (idx === undefined) {
@@ -433,7 +440,7 @@ export const Table = (props: TableProps) => {
     visRowRng,
     setScrollTop,
     rowHeight,
-    clientMidHt,
+    clientMidHeight,
     midCols,
     bodyVisColRng,
     setScrollLeft,
@@ -575,91 +582,97 @@ export const Table = (props: TableProps) => {
 
   const layoutCtValue: LayoutContext = useMemo(
     () => ({
-      totalHeight: totalHt,
-      totalWidth: totalWh,
+      totalHeight,
+      totalWidth,
+      clientWidth,
+      clientHeight,
     }),
-    [totalHt, totalWh]
+    [totalHeight, totalWidth]
   );
 
   return (
     <TableContext.Provider value={contextValue}>
-      {props.children}
-      <SelectionContext.Provider value={selCtValue}>
-        <SizingContext.Provider value={sizingCtValue}>
-          <div
-            className={cx(
-              withBaseName(),
-              {
-                [withBaseName("zebra")]: isZebra,
-              },
-              className
-            )}
-            style={style}
-            ref={rootRef}
-            tabIndex={0}
-            onKeyDown={onKeyDown}
-            data-name={"grid-root"}
-          >
-            <CellMeasure setRowHeight={setRowHeight} />
-            <Scrollable
-              scrollLeft={scrollLeft}
-              scrollTop={scrollTop}
-              setScrollLeft={setScrollLeft}
-              setScrollTop={setScrollTop}
-              scrollerRef={scrollableRef}
-              topRef={topRef}
-              rightRef={rightRef}
-              bottomRef={bottomRef}
-              leftRef={leftRef}
-              middleRef={middleRef}
-            />
-            <MiddlePart
-              middleRef={middleRef}
-              onWheel={onWheel}
-              columns={bodyVisibleColumns}
-              rows={rows}
-              hoverOverRowKey={hoverRowKey}
-              setHoverOverRowKey={setHoverRowKey}
-            />
-            <TopPart
-              columns={headVisibleColumns}
-              columnGroups={visColGrps}
-              topRef={topRef}
-              onWheel={onWheel}
-            />
-            <LeftPart
-              leftRef={leftRef}
-              onWheel={onWheel}
-              columns={leftCols}
-              rows={rows}
-              isRaised={isLeftRaised}
-              hoverOverRowKey={hoverRowKey}
-              setHoverOverRowKey={setHoverRowKey}
-            />
-            <RightPart
-              rightRef={rightRef}
-              onWheel={onWheel}
-              columns={rightCols}
-              rows={rows}
-              isRaised={isRightRaised}
-              hoverOverRowKey={hoverRowKey}
-              setHoverOverRowKey={setHoverRowKey}
-            />
-            <TopLeftPart
-              onWheel={onWheel}
-              columns={leftCols}
-              columnGroups={leftGrps}
-              isRaised={isLeftRaised}
-            />
-            <TopRightPart
-              onWheel={onWheel}
-              columns={rightCols}
-              columnGroups={rightGrps}
-              isRaised={isRightRaised}
-            />
-          </div>
-        </SizingContext.Provider>
-      </SelectionContext.Provider>
+      <LayoutContext.Provider value={layoutCtValue}>
+        <SelectionContext.Provider value={selCtValue}>
+          <SizingContext.Provider value={sizingCtValue}>
+            {props.children}
+            <div
+              className={cx(
+                withBaseName(),
+                {
+                  [withBaseName("zebra")]: isZebra,
+                },
+                className
+              )}
+              style={style}
+              ref={rootRef}
+              tabIndex={0}
+              onKeyDown={onKeyDown}
+              data-name={"grid-root"}
+            >
+              <CellMeasure setRowHeight={setRowHeight} />
+              <Scrollable
+                scrollLeft={scrollLeft}
+                scrollTop={scrollTop}
+                setScrollLeft={setScrollLeft}
+                setScrollTop={setScrollTop}
+                scrollerRef={scrollableRef}
+                topRef={topRef}
+                rightRef={rightRef}
+                bottomRef={bottomRef}
+                leftRef={leftRef}
+                middleRef={middleRef}
+              />
+              <MiddlePart
+                middleRef={middleRef}
+                onWheel={onWheel}
+                columns={bodyVisibleColumns}
+                rows={rows}
+                hoverOverRowKey={hoverRowKey}
+                setHoverOverRowKey={setHoverRowKey}
+                midGap={midGap}
+              />
+              <TopPart
+                columns={headVisibleColumns}
+                columnGroups={visColGrps}
+                topRef={topRef}
+                onWheel={onWheel}
+                midGap={midGap}
+              />
+              <LeftPart
+                leftRef={leftRef}
+                onWheel={onWheel}
+                columns={leftCols}
+                rows={rows}
+                isRaised={isLeftRaised}
+                hoverOverRowKey={hoverRowKey}
+                setHoverOverRowKey={setHoverRowKey}
+              />
+              <RightPart
+                rightRef={rightRef}
+                onWheel={onWheel}
+                columns={rightCols}
+                rows={rows}
+                isRaised={isRightRaised}
+                hoverOverRowKey={hoverRowKey}
+                setHoverOverRowKey={setHoverRowKey}
+              />
+              <TopLeftPart
+                onWheel={onWheel}
+                columns={leftCols}
+                columnGroups={leftGroups}
+                isRaised={isLeftRaised}
+              />
+              <TopRightPart
+                onWheel={onWheel}
+                columns={rightCols}
+                columnGroups={rightGroups}
+                isRaised={isRightRaised}
+              />
+            </div>
+          </SizingContext.Provider>
+        </SelectionContext.Provider>
+      </LayoutContext.Provider>
     </TableContext.Provider>
   );
 };

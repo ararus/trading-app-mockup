@@ -27,6 +27,7 @@ export class RootStore {
       tokenPairInfos: computed,
       updatePrices: action,
       currentTokenPrice: computed,
+      updateTokenPairs: action,
     });
     this.tokenSelector = new TokenSelectorStore(this);
     this.connection = new ConnectionStore(this);
