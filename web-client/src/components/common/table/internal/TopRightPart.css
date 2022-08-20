@@ -1,0 +1,17 @@
+.uitkTableTopRightPart {
+  position: absolute;
+  top: 0;
+  right: var(--uitkTable-scrollBar-size);
+  z-index: 2;
+}
+
+.uitkTableTopRightPart-raised {
+  box-shadow: -6px 0 4px -4px var(--uitkTable-shadow-color);
+}
+
+.uitkTableTopRightPart table {
+  table-layout: fixed;
+
+  width: var(--uitkTable-rightWidth);
+  height: var(--uitkTable-topHeight);
+}

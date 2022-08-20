@@ -1,5 +1,10 @@
 import { filter, map, Observable, Subject, Subscribable } from "rxjs";
-import { IOrderBook, IOrderBookMessage, ITokenPrice } from "../dtos";
+import {
+  IOpenOrders,
+  IOrderBook,
+  IOrderBookMessage,
+  ITokenPrice,
+} from "../dtos";
 import { webSocket } from "rxjs/webSocket";
 import { IStreamReply } from "../../../server/src/dtos";
 
@@ -35,4 +40,7 @@ export class ServerApi {
       `orderBook_${tokenPair}_${priceLevelSize}`,
       [tokenPair, priceLevelSize]
     );
+
+  public getOpenOrders = (): Observable<IOpenOrders> =>
+    this.requestStream("openOrders");
 }

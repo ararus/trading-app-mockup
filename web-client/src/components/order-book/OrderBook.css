@@ -10,19 +10,19 @@
 .tamOrderBook-sellLayout {
   display: flex;
   flex-direction: column-reverse;
-  height: 400px;
+  /*height: 400px;*/
 }
 
 .tamOrderBook-buyLayout {
-  height: 400px;
+  /*height: 400px;*/
 }
 
 .tamOrderBook-sellGridList {
-  max-height: 400px;
+  max-height: 200px;
 }
 
 .tamOrderBook-buyGridList {
-  max-height: 400px;
+  max-height: 200px;
 }
 
 .tamOrderBook-title {
@@ -30,11 +30,11 @@
 }
 
 .tamOrderBook-sellPrice {
-  color: var(--uitk-color-red-600);
+  color: var(--tam-negative-color);
 }
 
 .tamOrderBook-buyPrice {
-  color: var(--uitk-color-green-600);
+  color: var(--tam-positive-color);
 }
 
 .tamOrderBook-amount {

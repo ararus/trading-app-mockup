@@ -5,16 +5,13 @@ import {
   FlexItem,
   FlexLayout,
   makePrefixer,
-  Panel,
 } from "@jpmorganchase/uitk-core";
 import "./OrderBook.css";
 import {
   Dropdown,
   LabelCaption,
-  Text,
   ToggleButton,
   ToggleButtonGroup,
-  Toolbar,
 } from "@jpmorganchase/uitk-lab";
 import {
   ArrowDownIcon,
@@ -22,7 +19,6 @@ import {
   SwapIcon,
 } from "@jpmorganchase/uitk-icons";
 import { GridList, IGridListCellProps, IGridListColumn } from "../common";
-import cn from "classnames";
 import { useStore } from "../../store";
 import { IPriceLevel } from "../../dtos";
 
@@ -97,7 +93,11 @@ export const OrderBook: FC<IOrderBookProps> = observer((props) => {
 
   return (
     <Card className={withBaseName()}>
-      <FlexLayout direction={"column"} className={withBaseName("content")}>
+      <FlexLayout
+        direction={"column"}
+        disableWrap
+        className={withBaseName("content")}
+      >
         <FlexItem>
           <FlexLayout align={"center"}>
             <FlexItem grow={1}>

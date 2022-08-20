@@ -19,6 +19,7 @@ import {
   Portal,
   StaticInputAdornment,
   useFloatingUI,
+  useWindow,
 } from "@jpmorganchase/uitk-core";
 import { ToggleButton, ToggleButtonGroup } from "@jpmorganchase/uitk-lab";
 import {

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { FormField, Input, InputProps } from "@jpmorganchase/uitk-core";
-import { NumericField } from "../../store";
+import { NumericField } from "../../../store";
 
 export type INumericInputProps = Pick<InputProps, "endAdornment"> & {
   field: NumericField;

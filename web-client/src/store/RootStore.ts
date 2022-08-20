@@ -7,17 +7,20 @@ import { ConnectionStore } from "./ConnectionStore";
 import { IOrderBook, IPriceLevel, ITokenPair, ITokenPrice } from "../dtos";
 import { OrderFormStore } from "./OrderFormStore";
 import { OrderBookStore } from "./OrderBookStore";
+import { OpenOrdersStore } from "./OpenOrdersStore";
 
 export class RootStore {
   public readonly tokens = observable.array<string>(tokens);
   private readonly _tokenPairs = observable.array<TokenPair>([]);
   private readonly _tokenPairInfos = observable.array<TokenPairInfo>([]);
   private readonly _tokenPricesUsd = observable.map<string, number>();
+  private readonly _theme = observable.box<string>("light");
 
   public readonly tokenSelector: TokenSelectorStore;
   public readonly connection: ConnectionStore;
   public readonly orderForm: OrderFormStore;
   public readonly orderBook: OrderBookStore;
+  public readonly openOrders: OpenOrdersStore;
 
   constructor() {
     makeObservable(this, {
@@ -29,6 +32,7 @@ export class RootStore {
     this.connection = new ConnectionStore(this);
     this.orderForm = new OrderFormStore(this);
     this.orderBook = new OrderBookStore();
+    this.openOrders = new OpenOrdersStore(this);
   }
 
   public get tokenPairInfos(): TokenPairInfo[] {

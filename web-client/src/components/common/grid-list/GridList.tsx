@@ -11,7 +11,7 @@ import React, {
 import { makePrefixer } from "@jpmorganchase/uitk-core";
 import "./GridList.css";
 import cn from "classnames";
-import { getAttribute } from "../../utils/getAttribute";
+import { getAttribute } from "../../../utils/getAttribute";
 import { observer } from "mobx-react-lite";
 
 export interface IGridListCellProps<T> {

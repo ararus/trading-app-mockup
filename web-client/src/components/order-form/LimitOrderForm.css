@@ -1,0 +1,23 @@
+.tamLimitOrderForm {
+
+}
+
+.tamLimitOrderForm-buyButton {
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.tamLimitOrderForm-buyButton.uitkToggleButton-toggled {
+  --uitkButton-background: var(--tam-positive-color);
+  --uitkButton-background-hover: var(--tam-positive-color-active);
+}
+
+.tamLimitOrderForm-sellButton {
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.tamLimitOrderForm-sellButton.uitkToggleButton-toggled {
+  --uitkButton-background: var(--tam-negative-color);
+  --uitkButton-background-hover: var(--tam-negative-color-active);
+}

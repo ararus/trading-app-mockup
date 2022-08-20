@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BorderItem,
   BorderLayout,
@@ -13,32 +13,46 @@ import { OrderForm } from "./components/order-form";
 import { StoreProvider } from "./store";
 import { MainToolbar } from "./components/main-toolbar";
 import { OrderBook } from "./components/order-book";
+import { OpenOrders } from "./components/open-orders/OpenOrders";
+import { observer } from "mobx-react-lite";
+import { ThemeSwitcher } from "./components/theme-switcher/ThemeSwitcher";
 
-function App() {
+const App = observer(function App() {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
   return (
-    <ToolkitProvider density={"high"} theme={"light"}>
-      <StoreProvider>
-        <BorderLayout gap={2} className={"tamApp"}>
-          <BorderItem position={"header"}>
-            <Card>HEADER</Card>
-          </BorderItem>
-          <BorderItem position={"right"}>
-            <OrderForm />
-          </BorderItem>
-          <BorderItem position={"main"}>
-            <FlexLayout direction={"column"} justify={"center"}>
-              <FlexItem>
-                <MainToolbar />
-              </FlexItem>
-            </FlexLayout>
-          </BorderItem>
-          <BorderItem position={"left"}>
-            <OrderBook />
-          </BorderItem>
-        </BorderLayout>
-      </StoreProvider>
-    </ToolkitProvider>
+    <StoreProvider>
+      <ToolkitProvider density={"high"} theme={theme}>
+        <div className={"tamApp"}>
+          <BorderLayout gap={2} className={"tamApp-layout"}>
+            <BorderItem position={"header"}>
+              <Card>
+                <FlexLayout>
+                  <ThemeSwitcher theme={theme} setTheme={setTheme} />
+                </FlexLayout>
+              </Card>
+            </BorderItem>
+            <BorderItem position={"right"}>
+              <OrderForm />
+            </BorderItem>
+            <BorderItem position={"main"}>
+              <FlexLayout direction={"column"} justify={"center"}>
+                <FlexItem>
+                  <MainToolbar />
+                </FlexItem>
+              </FlexLayout>
+            </BorderItem>
+            <BorderItem position={"left"}>
+              <OrderBook />
+            </BorderItem>
+            <BorderItem position={"bottom"}>
+              <OpenOrders />
+            </BorderItem>
+          </BorderLayout>
+        </div>
+      </ToolkitProvider>
+    </StoreProvider>
   );
-}
+});
 
 export default App;

@@ -1,0 +1,54 @@
+.uitkTableBaseCell {
+}
+
+.uitkTableBaseCell {
+  box-sizing: border-box;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border-style: none;
+  white-space: nowrap;
+  position: relative;
+  height: var(--uitkTable-rowHeight);
+  font-size: var(--uitkTable-fontSize);
+  font-weight: normal;
+  z-index: var(--uitkTable-cell-zIndex);
+}
+
+.uitkTableBaseCell-selectedCell {
+  background-color: var(--uitkTable-cell-backgroundColor-selected);
+}
+
+.uitkTableBaseCell-secondary {
+  background-color: var(--uitkTable-backgroundColor-secondary);
+}
+
+.uitkTableBaseCell-columnDivider {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--uitkTable-columnDivider-color);
+}
+
+.uitkTableBaseCell-allEditable {
+  border-width: 0 0 1px 1px;
+}
+
+.uitkTableBaseCell-editable {
+  border-width: 0 1px 1px 2px;
+  border-color: #84878e;
+}
+
+.uitkTableBaseCell-valueContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: var(--uitkTable-cell-padding);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: var(--uitkTable-rowHeight);
+}

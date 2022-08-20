@@ -1,10 +1,12 @@
 import { FC, useState } from "react";
 import "./OrderForm.css";
-import { Card, FlexLayout } from "@jpmorganchase/uitk-core";
+import { Card, FlexLayout, makePrefixer } from "@jpmorganchase/uitk-core";
 import { Tab, Tabstrip } from "@jpmorganchase/uitk-lab";
 import { LimitOrderForm } from "./LimitOrderForm";
 
 export interface IOrderForm {}
+
+const withBaseName = makePrefixer("tamOrderForm");
 
 export const OrderForm: FC<IOrderForm> = (props) => {
   const tabs = ["Limit", "Market", "Stop", "Stop Limit"];
@@ -16,7 +18,7 @@ export const OrderForm: FC<IOrderForm> = (props) => {
 
   return (
     <div>
-      <Card className={"tam-orderForm"}>
+      <Card className={withBaseName()}>
         <FlexLayout direction="column">
           <Tabstrip tabIndex={selectedTabIndex} onActiveChange={onTabChange}>
             {tabs.map((tab, i) => (

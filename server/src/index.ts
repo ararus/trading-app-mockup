@@ -80,6 +80,19 @@ app.ws.use(
                   );
                 })
             );
+          } else if (message.name === "openOrders") {
+            subscriptions.set(
+              message.key,
+              dummy.getOpenOrders().subscribe((openOrders) => {
+                ctx.websocket.send(
+                  JSON.stringify({
+                    type: "openOrders",
+                    key: message.key,
+                    data: openOrders,
+                  })
+                );
+              })
+            );
           }
         }
       });

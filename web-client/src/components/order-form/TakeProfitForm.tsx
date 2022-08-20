@@ -1,8 +1,11 @@
 import { FC, useState } from "react";
-import { FlexLayout, Switch } from "@jpmorganchase/uitk-core";
+import { FlexLayout, makePrefixer, Switch } from "@jpmorganchase/uitk-core";
 import { ProfitTarget } from "./ProfitTarget";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../store";
+import "./TakeProfitForm.css";
+
+const withBaseName = makePrefixer("tamTakeProfitForm");
 
 export interface ITakeProfitForm {}
 
@@ -20,7 +23,7 @@ export const TakeProfitForm: FC<ITakeProfitForm> = observer((props) => {
       <Switch
         checked={takeProfit}
         onChange={onTakeProfitChange}
-        className={"tam-takeProfitSwitch"}
+        className={withBaseName("switch")}
         label={"Take profit"}
       />
       {takeProfit ? (
@@ -28,8 +31,8 @@ export const TakeProfitForm: FC<ITakeProfitForm> = observer((props) => {
           <ProfitTarget />
           <ProfitTarget />
           <FlexLayout>
-            <span className={"tam-flexLabel"}>Projected profit:</span>
-            <span className={"tam-projectedProfit"}>350</span>
+            <span className={withBaseName("label")}>Projected profit:</span>
+            <span className={withBaseName("projectedProfit")}>350</span>
             <span>USDT</span>
           </FlexLayout>
         </>

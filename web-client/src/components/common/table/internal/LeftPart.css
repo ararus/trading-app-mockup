@@ -1,0 +1,28 @@
+.uitkTableLeftPart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: var(--uitkTable-scrollBar-size);
+  overflow-x: hidden;
+  overflow-y: hidden;
+  z-index: 2;
+  clip-path: inset(var(--uitkTable-topHeight) -10px 0 0);
+}
+
+.uitkTableLeftPart-raised {
+  box-shadow: 6px 0 4px -4px var(--uitkTable-shadow-color);
+}
+
+.uitkTableLeftPart-space {
+  position: relative;
+  height: var(--uitkTable-totalHeight);
+  width: var(--uitkTable-leftWidth);
+}
+
+.uitkTableLeftPart table {
+  border-spacing: var(--uitkTable-borderSpacing);
+  table-layout: fixed;
+  position: absolute;
+  top: var(--uitkTable-bodyVisibleAreaTop);
+  width: var(--uitkTable-leftWidth);
+}

@@ -1,48 +1,7 @@
-.tam-orderForm {
+.tamOrderForm {
   width: 320px;
 }
 
-.tam-buyButton {
-  flex-grow: 1;
-}
-
-.tam-buyButton.uitkToggleButton-toggled {
-  --uitkButton-background: var(--uitk-color-green-600);
-  --uitkButton-background-hover: var(--uitk-color-green-400);
-}
-
-.tam-buyButton .uitkFlexLayout {
-  gap: 0;
-}
-
-.tam-sellButton {
-  flex-grow: 1;
-}
-
-.tam-sellButton .uitkFlexLayout {
-  gap: 0;
-}
-
-.tam-sellButton.uitkToggleButton-toggled {
-  --uitkButton-background: var(--uitk-color-red-600);
-  --uitkButton-background-hover: var(--uitk-color-red-400);
-}
-
 .tam-takeProfitSwitch .uitkControlLabel-label {
-  flex-grow: 1;
-}
-
-.tam-removeProfitTarget {
-}
-
-.tam-projectedProfit {
-  color: var(--uitk-color-green-600);
-}
-
-.tam-projectedLoss {
-  color: var(--uitk-color-red-600);
-}
-
-.tam-flexLabel {
   flex-grow: 1;
 }

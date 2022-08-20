@@ -1,13 +1,21 @@
 import { FC } from "react";
 import { ToggleButton, ToggleButtonGroup } from "@jpmorganchase/uitk-lab";
-import { FlexLayout, StaticInputAdornment } from "@jpmorganchase/uitk-core";
+import {
+  FlexItem,
+  FlexLayout,
+  makePrefixer,
+  StaticInputAdornment,
+} from "@jpmorganchase/uitk-core";
 import { TakeProfitForm } from "./TakeProfitForm";
 import { StopLossForm } from "./StopLossForm";
 import { useStore } from "../../store";
 import { NumericInput } from "../common";
 import { observer } from "mobx-react-lite";
+import "./LimitOrderForm.css";
 
 export interface ILimitOrderForm {}
+
+const withBaseName = makePrefixer("tamLimitOrderForm");
 
 export const LimitOrderForm: FC<ILimitOrderForm> = observer((props) => {
   const rootStore = useStore();
@@ -32,14 +40,14 @@ export const LimitOrderForm: FC<ILimitOrderForm> = observer((props) => {
         onChange={onBuySellChange}
         selectedIndex={buySellIndex}
       >
-        <ToggleButton className={"tam-buyButton"}>
-          <FlexLayout direction={"column"}>
-            Buy
-            <span>{buyPriceText}</span>
+        <ToggleButton className={withBaseName("buyButton")}>
+          <FlexLayout direction={"column"} gap={0}>
+            <FlexItem>Buy</FlexItem>
+            <FlexItem>{buyPriceText}</FlexItem>
           </FlexLayout>
         </ToggleButton>
-        <ToggleButton className={"tam-sellButton"}>
-          <FlexLayout direction={"column"}>
+        <ToggleButton className={withBaseName("sellButton")}>
+          <FlexLayout direction={"column"} gap={0}>
             Sell
             <span>{sellPriceText}</span>
           </FlexLayout>

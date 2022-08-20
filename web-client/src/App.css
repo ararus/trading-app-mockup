@@ -1,7 +1,37 @@
-.tamApp {
-  margin: 12px;
+.uitk-light {
+  --tam-positive-color: var(--uitk-color-green-600);
+  --tam-positive-color-active: var(--uitk-color-green-400);
+  --tam-negative-color: var(--uitk-color-red-600);
+  --tam-negative-color-active: var(--uitk-color-red-400);
 }
 
-body {
-  background-color: lightgray;
+.uitk-dark {
+  --tam-positive-color: var(--uitk-color-green-50);
+  --tam-positive-color-active: var(--uitk-color-green-20);
+  --tam-negative-color: var(--uitk-color-red-50);
+  --tam-negative-color-active: var(--uitk-color-red-20);
+}
+
+.tamApp {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.uitk-light .tamApp {
+  background-color: var(--uitk-color-grey-10);
+}
+
+.uitk-dark .tamApp {
+  background-color: var(--uitk-color-grey-900);
+}
+
+.tamApp-layout {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  left: 12px;
 }

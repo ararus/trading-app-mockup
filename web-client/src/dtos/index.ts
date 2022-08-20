@@ -30,6 +30,20 @@ export interface IOrderBook {
   change: number;
 }
 
+export interface IOpenOrder {
+  id: string;
+  tokenPair: string;
+  side: string;
+  amount: number;
+  failed: number;
+  price: number;
+  time: string;
+}
+
+export interface IOpenOrders {
+  items: IOpenOrder[];
+}
+
 export interface IOrderBookMessage {
   type: "orderBook";
   tokenPair: string;

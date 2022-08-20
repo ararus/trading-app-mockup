@@ -1,0 +1,288 @@
+.uitk-density-touch .uitkTable {
+  --uitkTable-rowHeight: 61px;
+  --uitkTable-padding: 16px;
+  --uitkTable-fontSize: 16px;
+  --uitkTable-dividerGap: 20px;
+}
+
+.uitk-density-low .uitkTable {
+  --uitkTable-rowHeight: 49px;
+  --uitkTable-padding: 12px;
+  --uitkTable-fontSize: 14px;
+  --uitkTable-dividerGap: 16px;
+}
+
+.uitk-density-medium .uitkTable {
+  --uitkTable-rowHeight: 37px;
+  --uitkTable-padding: 8px;
+  --uitkTable-fontSize: 12px;
+  --uitkTable-dividerGap: 12px;
+}
+
+.uitk-density-high .uitkTable {
+  --uitkTable-rowHeight: 25px;
+  --uitkTable-padding: 8px;
+  --uitkTable-fontSize: 12px;
+  --uitkTable-dividerGap: 8px;
+}
+
+.uitk-density-ultrahigh .uitkTable {
+  --uitkTable-rowHeight: 21px;
+  --uitkTable-padding: 4px;
+  --uitkTable-fontSize: 12px;
+  --uitkTable-dividerGap: 6px;
+  /*Checkbox*/
+  --checkbox-font-size: 11px;
+  /*CheckboxIcon*/
+  --checkbox-density-bar-y: 5px;
+  --checkbox-density-bar-height: 3px;
+  --checkbox-size: 12px;
+  /*FormField*/
+  --formField-focused-outline-bottom: 4px;
+  --formLabel-top-marginBottom: 2px;
+  /*FormHelperText*/
+  --formField-helperText-marginTop: 2px;
+  --formField-helperText-marginTop-fullWidth: 3px;
+  --formHelperText-background-offset-height: 17px;
+  /*FormLabel*/
+  --formLabel-default-top: 3px;
+  --formLabel-left-top: 4px;
+  /*Pill*/
+  --pill-icon-offset: 1px;
+  /*RadioButton*/
+  --radioButton-label-marginTop: 3px;
+  --radioButton-row-marginRight: 12px;
+  /*RadioButtonGroup*/
+  --radioButtonGroup-vertical-label-marginBottom: 4px;
+  --radioButtonGroup-legend-minHeight: 14px;
+  --radioButtonGroup-legend-paddingRight: 16px;
+  --radioButtonGroup-horizontal-legend-marginTop: 2px;
+  --radioButtonGroup-horizontal-legend-marginRight: 12px;
+  --radioButtonGroup-horizontal-legend-paddingRight: 4px;
+  --radioButtonGroup-horizontal-legend-marginBottom: 0px;
+  --radioButtonGroup-vertical-formLabel-paddingRight: 4px;
+  --radioButtonGroup-vertical-formLabel-marginBottom: 4px;
+  --radioButtonGroup-vertical-formLabel-transform: translate(0px, 3px);
+  --radioButtonGroup-formLabel-transform: translate(0px, 3px);
+  /*RadioIcon*/
+  --radioIcon-size: 12px;
+  /*Switch*/
+  --switch-width: 30px;
+  --switch-thumb-margin: 2px 0 0 2px;
+  --switch-thumb-size: 12px;
+  --switch-thumb-translate: 14px;
+  /*text*/
+  --uitk-text-h1-fontSize: 18px;
+  --uitk-text-h1-lineHeight: 24px;
+
+  --uitk-text-h2-fontSize: 14px;
+  --uitk-text-h2-lineHeight: 18px;
+
+  --uitk-text-h3-fontSize: 12px;
+  --uitk-text-h3-lineHeight: 16px;
+
+  --uitk-text-h4-fontSize: 11px;
+  --uitk-text-h4-lineHeight: 14px;
+
+  --uitk-text-caption-fontSize: 10px;
+  --uitk-text-caption-lineHeight: 14px;
+  --uitk-text-caption-minHeight: 14px;
+
+  --uitk-text-help-fontSize: 10px;
+  --uitk-text-help-lineHeight: 13px;
+
+  --uitk-text-fontSize: 11px;
+  --uitk-text-lineHeight: 14px;
+  --uitk-text-minHeight: 14px;
+  /*animation*/
+  --uitk-animation-opacity-start: 0;
+  --uitk-animation-opacity-end: 1;
+  --uitk-animation-scale-start: 0;
+  --uitk-animation-scale-end: 1;
+  --uitk-animation-transform-start: 100%;
+  --uitk-animation-transform-end: 0;
+  --uitk-animation-duration: 0.3s;
+  --uitk-animation-timing-function: ease-in;
+  --uitk-animation-slide-in-top: slide-in-top var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-slide-in-left: slide-in-left var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-slide-in-right: slide-in-right var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-slide-in-bottom: slide-in-bottom var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-slide-out-top: slide-out-top var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-slide-out-left: slide-out-left var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-slide-out-right: slide-out-right var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-slide-out-bottom: slide-out-bottom var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-fade-in-back: fade-in-back var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-fade-in-forward: fade-in-forward var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-fade-in-center: fade-in-center var(--uitk-animation-duration) var(--uitk-animation-timing-function);
+  --uitk-animation-fade-out-back: fade-out-back var(--uitk-animation-duration) ease-out both;
+  /*size*/
+  --uitk-size-basis-unit: 4px;
+  --uitk-size-graphic-small: 12px;
+  --uitk-size-graphic-medium: 24px;
+  --uitk-size-graphic-large: 48px;
+  --uitk-size-sharktooth-height: 5px;
+  --uitk-size-sharktooth-width: 10px;
+
+  --uitk-size-unit: var(--uitk-size-basis-unit);
+  --uitk-size-base: 20px;
+  --uitk-size-adornment: calc(var(--uitk-size-base) + var(--uitk-size-unit));
+  --uitk-size-appHeader: calc(var(--uitk-size-base) + var(--uitk-size-unit) * 3);
+  --uitk-size-bottomBorder: 2px;
+  --uitk-size-brandBar: var(--uitk-size-unit);
+  --uitk-size-formField-top: calc(var(--uitk-size-base) + var(--uitk-size-unit) * 4);
+  --uitk-size-inlineDivider: calc(var(--uitk-size-base) - 8px);
+  --uitk-size-logo: 14px;
+  --uitk-size-pill: calc(var(--uitk-size-base) - var(--uitk-size-unit) * 1.5);
+  --uitk-size-selection: 8px;
+  --uitk-size-stackable: calc(var(--uitk-size-base) + var(--uitk-size-unit));
+  --uitk-size-switch: calc(var(--uitk-size-base) - var(--uitk-size-selection) + 4px);
+  --uitk-size-toggleGroupButton: calc(var(--uitk-size-base) - var(--uitk-size-unit) + 2px);
+  --uitk-size-toolbar: calc(var(--uitk-size-base) + var(--uitk-size-unit) * 2);
+
+  /*typography*/
+  --uitk-typography-fontFamily: uitk-sans;
+  --uitk-typography-fontFamily-code: "PT Mono";
+
+  --uitk-typography-weight-light: 300;
+  --uitk-typography-weight-regular: 400;
+  --uitk-typography-weight-medium: 500;
+  --uitk-typography-weight-semiBold: 600;
+  --uitk-typography-weight-bold: 700;
+  --uitk-typography-weight-extraBold: 800;
+  /*zindex*/
+  --uitk-zIndex-default: 1;
+  --uitk-zIndex-popout: 1000;
+  --uitk-zIndex-docked: 1050;
+  --uitk-zIndex-appheader: 1100;
+  --uitk-zIndex-drawer: 1200;
+  --uitk-zIndex-modal: 1300;
+  --uitk-zIndex-notification: 1400;
+  --uitk-zIndex-dragobject: 1420;
+  --uitk-zIndex-contextmenu: 1450;
+  --uitk-zIndex-tooltip: 1500;
+}
+
+/*ControlLabel*/
+.uitk-density-ultrahigh .uitkTable .uitkControlLabel-labelRight {
+  margin-left: 3px;
+  margin-right: 0;
+}
+.uitk-density-ultrahigh .uitkTable .backwardCompat .uitkControlLabel-label {
+  margin-right: 4px;
+}
+
+/*Input*/
+.uitk-density-ultrahigh .uitkTable .uitkInput {
+  --input-button-inset: 2px;
+}
+
+/*Tooltip*/
+.uitk-density-ultrahigh .uitkTable .uitkTooltip {
+  --icon-top: 1px;
+}
+
+/*TokenizedInput*/
+.uitk-density-ultrahigh .uitkTable .uitkTokenizedInput {
+  --tokenized-input-gutter-size: calc(var(--uitk-size-basis-unit) - 1px);
+  --tokenized-input-pill-group-y-padding: calc(var(--uitk-size-unit) / 2 + 1px);
+  --tokenized-input-last-pill-margin: var(--uitk-size-unit);
+}
+/*ToggleButton*/
+.uitk-density-ultrahigh .uitkTable .uitkToggleButton {
+  --toggle-button-icon-padding: 1px;
+}
+
+.uitkTable {
+  --uitkTable-scrollBar-size: 15px;
+  --uitkTable-cell-padding: 0 var(--uitkTable-padding) 0 var(--uitkTable-padding);
+  --uitkTable-borderSpacing: 1px;
+
+  --uitkTable-rowHover-zIndex: 1;
+  --uitkTable-cell-zIndex: 2;
+}
+
+.uitk-light .uitkTable {
+  --uitkTable-backgroundColor-primary: var(--uitk-color-white);
+  --uitkTable-backgroundColor-secondary: var(--uitk-color-grey-20);
+  --uitkTable-zebraColor: var(--uitk-color-grey-20);
+
+  --uitkTable-row-backgroundColor-hover: var(--uitk-color-blue-10);
+  --uitkTable-row-backgroundColor-selected: var(--uitk-color-blue-30);
+
+  --uitkTable-row-borderColor-selected: var(--uitk-color-blue-50);
+  --uitkTable-cell-backgroundColor-selected: #64b1e4;
+  /*--uitkTable-header-borderColor: var(--uitk-color-grey-90);*/
+
+  --uitkTable-header-color: var(--uitk-color-grey-300);
+
+  --uitkTable-headerColumnSeparator-color: rgba(0, 0, 0, .1);
+  --uitkTable-headerRowSeparator-color: rgba(0, 0, 0, .3);
+  --uitkTable-groupHeaderRowSeparator-color: rgba(0, 0, 0, .1);
+
+  --uitkTable-groupHeader-color: var(--uitk-color-grey-600);
+  --uitkTable-shadow-color: rgba(0, 0, 0, 0.2);
+  --uitkTable-columnDropTarget-color: var(--uitk-color-blue-500);
+  --uitkTable-cursor-borderColor: #00477b;
+  --uitkTable-borderColor: var(--uitk-color-grey-90);
+
+  --uitkTable-rowDivider-color: rgba(0, 0, 0, .1);
+  --uitkTable-columnDivider-color: rgba(0, 0, 0, .1);
+  --uitkTable-rowDivider-color-divided: rgba(0, 0, 0, .2);
+}
+
+.uitk-dark .uitkTable {
+  --uitkTable-backgroundColor-primary: var(--uitk-color-grey-800);
+  --uitkTable-backgroundColor-secondary: #2f3136;
+  --uitkTable-zebraColor: rgba(255, 255, 255, .05);
+
+  --uitkTable-row-backgroundColor-hover: rgb(12, 53, 102);
+  --uitkTable-row-backgroundColor-selected: rgb(0, 40, 88);
+
+  --uitkTable-row-borderColor-selected: #4b9fd8;
+  --uitkTable-cell-backgroundColor-selected: #64b1e4;
+  /*--uitkTable-header-borderColor: var(--uitk-color-grey-100);*/
+
+  --uitkTable-header-color: var(--uitk-color-grey-50);
+
+  --uitkTable-headerColumnSeparator-color: rgba(255, 255, 255, .1);
+  --uitkTable-headerRowSeparator-color: rgba(255, 255, 255, .3);
+  --uitkTable-groupHeaderRowSeparator-color: rgba(255, 255, 255, .1);
+
+  --uitkTable-groupHeader-color: var(--uitk-color-grey-10);
+  --uitkTable-shadow-color: rgba(255, 255, 255, 0.4);
+  --uitkTable-columnDropTarget-color: var(--uitk-color-blue-100);
+  --uitkTable-cursor-borderColor: #7dc3f2;
+  --uitkTable-borderColor: var(--uitk-color-grey-100);
+
+  --uitkTable-rowDivider-color: rgba(255, 255, 255, .1);
+  --uitkTable-columnDivider-color: rgba(255, 255, 255, .1);
+  --uitkTable-rowDivider-color-divided: rgba(255, 255, 255, .2);
+}
+
+.uitkTable {
+  /*height: 600px;*/
+  /*width: 800px;*/
+  position: relative;
+  outline: none;
+  border-collapse: collapse;
+}
+
+.uitkTable table {
+  border-collapse: collapse;
+}
+
+.uitkTable-framed {
+  border: solid 1px var(--uitkTable-borderColor);
+}
+
+.uitkTable-primaryBackground {
+  background-color: var(--uitkTable-backgroundColor-primary);
+}
+
+.uitkTable-secondaryBackground {
+  background-color: var(--uitkTable-backgroundColor-secondary);
+}
+
+.uitkTable.uitkTable-zebra {
+  --uitkTable-rowDivider-color: transparent;
+}

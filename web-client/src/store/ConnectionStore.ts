@@ -3,12 +3,30 @@ import { RootStore } from "./RootStore";
 import { ServerApi } from "./ServerApi";
 import { Subscription, take } from "rxjs";
 
+class AutoSub {
+  private _sub?: Subscription;
+
+  public subscribe(fn: () => Subscription) {
+    this.unsubscribe();
+    this._sub = fn();
+  }
+
+  public unsubscribe() {
+    if (this._sub) {
+      this._sub.unsubscribe();
+      this._sub = undefined;
+    }
+  }
+}
+
 export class ConnectionStore {
   private readonly _isConnected = observable.box<boolean>(false);
   private readonly _rootStore: RootStore;
   private _serverApi: ServerApi = new ServerApi();
-  private _pricesSubscription?: Subscription;
-  private _orderBookSubscription?: Subscription;
+
+  private _pricesSub = new AutoSub();
+  private _orderBookSub = new AutoSub();
+  private _openOrdersSub = new AutoSub();
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
@@ -21,19 +39,13 @@ export class ConnectionStore {
     // Subscribe to prices when connected
     autorun(() => {
       if (this.isConnected) {
-        if (this._pricesSubscription) {
-          this._pricesSubscription.unsubscribe();
-        }
-        this._pricesSubscription = this._serverApi
-          .getPriceStream()
-          .subscribe((prices) => {
+        this._pricesSub.subscribe(() =>
+          this._serverApi.getPriceStream().subscribe((prices) => {
             this._rootStore.updatePrices(prices);
-          });
+          })
+        );
       } else {
-        if (this._pricesSubscription) {
-          this._pricesSubscription.unsubscribe();
-          this._pricesSubscription = undefined;
-        }
+        this._pricesSub.unsubscribe();
       }
     });
 
@@ -42,21 +54,30 @@ export class ConnectionStore {
       if (this.isConnected) {
         const tokenPair = this._rootStore.tokenSelector.selectedTokenPair;
         if (tokenPair) {
-          if (this._orderBookSubscription) {
-            this._orderBookSubscription.unsubscribe();
-          }
-          this._orderBookSubscription = this._serverApi
-            .getOrderBook(tokenPair.name, 0.00001)
-            .subscribe((orderBook) => {
-              this._rootStore.updateOrderBook(orderBook);
-            });
+          this._orderBookSub.subscribe(() =>
+            this._serverApi
+              .getOrderBook(tokenPair.name, 0.00001)
+              .subscribe((orderBook) => {
+                this._rootStore.updateOrderBook(orderBook);
+              })
+          );
           return;
         }
       }
-      if (this._orderBookSubscription) {
-        this._orderBookSubscription.unsubscribe();
-        this._orderBookSubscription = undefined;
+      this._orderBookSub.unsubscribe();
+    });
+
+    // Subscribe to open orders when connected?
+    autorun(() => {
+      if (this.isConnected) {
+        this._openOrdersSub.subscribe(() =>
+          this._serverApi.getOpenOrders().subscribe((x) => {
+            this._rootStore.openOrders.update(x);
+          })
+        );
+        return;
       }
+      this._openOrdersSub.unsubscribe();
     });
   }
 
@@ -83,14 +104,6 @@ export class ConnectionStore {
   };
 
   public disconnect = () => {
-    if (this._pricesSubscription) {
-      this._pricesSubscription.unsubscribe();
-      this._pricesSubscription = undefined;
-    }
-    if (this._orderBookSubscription) {
-      this._orderBookSubscription.unsubscribe();
-      this._orderBookSubscription = undefined;
-    }
     this._isConnected.set(false);
   };
 }

@@ -1,0 +1,15 @@
+.tamStopLossForm {
+
+}
+
+.tamStopLossForm-switch .uitkControlLabel-label {
+  flex-grow: 1;
+}
+
+.tamStopLossForm-label {
+  flex-grow: 1;
+}
+
+.tamStopLossForm-projectedLoss {
+  color: var(--tam-negative-color);
+}

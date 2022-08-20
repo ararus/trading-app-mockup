@@ -1,0 +1,15 @@
+.tamTakeProfitForm {
+
+}
+
+.tamTakeProfitForm-switch .uitkControlLabel-label {
+  flex-grow: 1;
+}
+
+.tamTakeProfitForm-label {
+  flex-grow: 1;
+}
+
+.tamTakeProfitForm-projectedProfit {
+  color: var(--tam-positive-color);
+}

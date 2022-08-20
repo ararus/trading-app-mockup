@@ -1,0 +1,86 @@
+.uitkTableHeaderCell {
+  text-align: left;
+  font-size: var(--uitkTable-fontSize);
+  font-weight: normal;
+  height: var(--uitkTable-rowHeight);
+  line-height: var(--uitkTable-rowHeight);
+  position: relative;
+  box-sizing: border-box;
+  color: var(--uitkTable-header-color);
+  white-space: nowrap;
+}
+
+.uitkTableHeaderCell-valueContainer {
+  line-height: var(--uitkTable-rowHeight);
+  padding: var(--uitkTable-cell-padding);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.uitkTableHeaderCell-autosizeContainer {
+  line-height: var(--uitkTable-rowHeight);
+  padding: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.uitkTableHeaderCell-measuredContent {
+  display: inline-block;
+  padding: var(--uitkTable-cell-padding);
+}
+
+.uitkTableHeaderCell-text {
+}
+
+.uitkTableHeaderCell-regularSeparator {
+  background-color: var(--uitkTable-headerColumnSeparator-color);
+  width: 1px;
+  height: auto;
+  position: absolute;
+  right: 0;
+  top: var(--uitkTable-dividerGap);
+  bottom: var(--uitkTable-dividerGap);
+}
+
+.uitkTableHeaderCell-edgeSeparator {
+  background-color: var(--uitkTable-headerColumnSeparator-color);
+  width: 1px;
+  height: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: var(--uitkTable-dividerGap);
+}
+
+.uitkTableHeaderCell-resizeHandle {
+  position: absolute;
+  right: -8px;
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  background-color: transparent;
+  cursor: col-resize;
+  z-index: 2;
+}
+
+.uitkTableHeaderCell-moveHandle {
+  position: absolute;
+  right: 32px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background-color: transparent;
+  cursor: move;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

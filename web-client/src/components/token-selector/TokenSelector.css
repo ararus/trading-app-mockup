@@ -29,7 +29,7 @@
 }
 
 .tamTokenSelector-lastPrice {
-  color: var(--uitk-color-green-600);
+  color: var(--tam-positive-color);
 }
 
 .tamTokenSelector-change {
@@ -37,9 +37,9 @@
 }
 
 .tamTokenSelector-positiveChange {
-  color: var(--uitk-color-green-600);
+  color: var(--tam-positive-color);
 }
 
 .tamTokenSelector-negativeChange {
-  color: var(--uitk-color-red-600);
+  color: var(--tam-negative-color);
 }

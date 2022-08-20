@@ -1,0 +1,26 @@
+.uitkTableMiddlePart {
+  overflow-y: hidden;
+  overflow-x: hidden;
+  position: absolute;
+  top: 0;
+  right: var(--uitkTable-scrollBar-size);
+  bottom: var(--uitkTable-scrollBar-size);
+  left: 0;
+  clip-path: inset(var(--uitkTable-topHeight) var(--uitkTable-rightWidth) 0 var(--uitkTable-leftWidth));
+}
+
+.uitkTableMiddlePart-space {
+  position: relative;
+  height: var(--uitkTable-totalHeight);
+  width: var(--uitkTable-totalWidth);
+}
+
+.uitkTableMiddlePart table {
+  border-spacing: var(--uitkTable-borderSpacing);
+  table-layout: fixed;
+  position: absolute;
+
+  width: var(--uitkTable-bodyVisibleColumnWidth);
+  top: var(--uitkTable-bodyVisibleAreaTop);
+  left: var(--uitkTable-bodyVisibleAreaLeft);
+}
