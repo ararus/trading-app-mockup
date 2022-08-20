@@ -25,10 +25,6 @@
   max-height: 400px;
 }
 
-.tamOrderBook svg {
-  width: 12px;
-}
-
 .tamOrderBook-title {
   white-space: nowrap;
 }

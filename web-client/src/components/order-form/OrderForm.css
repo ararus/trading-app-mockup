@@ -35,11 +35,6 @@
 .tam-removeProfitTarget {
 }
 
-.tam-removeProfitTarget svg {
-  margin-top: 2px;
-  width: 12px;
-}
-
 .tam-projectedProfit {
   color: var(--uitk-color-green-600);
 }

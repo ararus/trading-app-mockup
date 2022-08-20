@@ -1035,7 +1035,7 @@
     core-js-pure "^3.20.2"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.18.9", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.18.9", "@babel/runtime@^7.6.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
   version "7.18.9"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.9.tgz#b4fcfce55db3d2e5e080d2490f608a3b9f407f4a"
   integrity sha512-lkqXDcvlFT5rvEjiu6+QYO+1GXrEHRo2LOtS7E4GtX5ESIZOgepqsZBVIj6Pv+a6zqsya9VCgiK1KAK4BvJDAw==
@@ -1245,6 +1245,13 @@
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
+
+"@internationalized/date@^3.0.0":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@internationalized/date/-/date-3.0.1.tgz#66332e9ca8f59b7be010ca65d946bca430ba4b66"
+  integrity sha512-E/3lASs4mAeJ2Z2ye6ab7eUD0bPUfTeNVTAv6IS+ne9UtMu9Uepb9A1U2Ae0hDr6WAlBuvUtrakaxEdYB9TV6Q==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
@@ -1472,37 +1479,37 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
-"@jpmorganchase/uitk-core@0.3.0", "@jpmorganchase/uitk-core@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@jpmorganchase/uitk-core/-/uitk-core-0.3.0.tgz#fb4bcbde44e673eeeaa999817e128a4a25943632"
-  integrity sha512-AvIKBSkYX6s0Gf2OQn93146P/o8XHVlVlBUssOQyzXixXQ9AaWzkvydPfIxVfaw+D453GfrdC10tQXjMjK7T3Q==
+"@jpmorganchase/uitk-core@0.4.0", "@jpmorganchase/uitk-core@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@jpmorganchase/uitk-core/-/uitk-core-0.4.0.tgz#807e1bd2d9e277f43e67833d274aa685ac684860"
+  integrity sha512-1/BHaiWyvCzcXnqHDP7R51h01knuHDG2YxMz8SudRwmrJ6VJ0VG3Lg9M+WpJHgmKeluzquu1Juc5TzMNGE7X9A==
   dependencies:
     "@floating-ui/react-dom-interactions" "^0.5.0"
-    "@jpmorganchase/uitk-icons" "0.2.0"
+    "@jpmorganchase/uitk-icons" "0.3.0"
     classnames "^2.2.6"
     warning "^4.0.3"
 
-"@jpmorganchase/uitk-icons@0.2.0", "@jpmorganchase/uitk-icons@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@jpmorganchase/uitk-icons/-/uitk-icons-0.2.0.tgz#37a6ebcbf76fd8e1024c0707f93bdbccfc3a88c5"
-  integrity sha512-0wkdibJPrAfjRwlx8PWFZbZxaNqGEUUUZdPCArNQBhfm9NjeC4OpAkmhF9ENckIBzt2fQNWs3n6muAhcMIUytw==
+"@jpmorganchase/uitk-icons@0.3.0", "@jpmorganchase/uitk-icons@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@jpmorganchase/uitk-icons/-/uitk-icons-0.3.0.tgz#882ad8628cd159d6e3a652b9ec6180cb8d20080c"
+  integrity sha512-J7/auchyJhDnMyld5HqR/3n4KZnhEWpJNReXEYboXoADu58HYDHTFVgjdJrDuHEYpF+J7jxeJ0BQfrUeeta6VA==
   dependencies:
     classnames "^2.2.6"
 
-"@jpmorganchase/uitk-lab@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@jpmorganchase/uitk-lab/-/uitk-lab-0.3.0.tgz#afcf09d6f7b1666557128cccd808fce552ea73c6"
-  integrity sha512-Zrv5f8VxuaTNEJO8AlEerz8GPIlwYEgTmA4aZY4CcEdKu880i8SCGOsaR3z4JiZAbVGYebwgCUKw2+M4Xmi3kw==
+"@jpmorganchase/uitk-lab@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@jpmorganchase/uitk-lab/-/uitk-lab-0.4.0.tgz#88b6e0f3add004ffc016d74b1673d0ba8cf5989f"
+  integrity sha512-3B/4JZxPwh9HaxTZGh17+2THjK9Pj9TvQtmZlMIeZ/JBRJrPPOhWgLH7+itYugJmTvH7Aq9urNPuouEcM9vMFQ==
   dependencies:
     "@floating-ui/react-dom-interactions" "^0.5.0"
-    "@jpmorganchase/uitk-core" "0.3.0"
-    "@jpmorganchase/uitk-icons" "0.2.0"
+    "@internationalized/date" "^3.0.0"
+    "@jpmorganchase/uitk-core" "0.4.0"
+    "@jpmorganchase/uitk-icons" "0.3.0"
     aria-hidden "^1.1.1"
     attr-accept "^2.0.0"
     classnames "^2.2.6"
     clipboard-copy "^4.0.1"
     compute-scroll-into-view "^1.0.16"
-    dayjs "1.10.6"
     deepmerge "^4.2.2"
     no-scroll "^2.1.1"
     react-color "^2.19.3"
@@ -1511,10 +1518,10 @@
     tinycolor2 "^1.4.2"
     warning "^4.0.3"
 
-"@jpmorganchase/uitk-theme@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@jpmorganchase/uitk-theme/-/uitk-theme-0.3.0.tgz#2c5ca1ee271a5496c9c9ec4c492f05159958a657"
-  integrity sha512-eLmMF91tsZgF5lR5wk8Wr5eYpnclG0DgniiT4IcuAVcENoOgeYkaBF64PgDpBOg6AD5v/9Wgx+tnjGH8QOkM/g==
+"@jpmorganchase/uitk-theme@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@jpmorganchase/uitk-theme/-/uitk-theme-0.3.1.tgz#0991c3bed001bf1898f9d27748dc2648b941eb6b"
+  integrity sha512-QwrsXID+hh86LWh2P4Ax09+4nKcqBrloh+R1Zz/7exfDYQa/cv4pQ3LPGKz9oCtA6qCFrMcfMRpaxj+UPgqwwQ==
 
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
@@ -3539,11 +3546,6 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
-
-dayjs@1.10.6:
-  version "1.10.6"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.6.tgz#288b2aa82f2d8418a6c9d4df5898c0737ad02a63"
-  integrity sha512-AztC/IOW4L1Q41A86phW5Thhcrco3xuAA+YX/BLpLWWjRcTj5TOt/QImBLmCKlrF7u7k47arTnOyL6GnbG8Hvw==
 
 debug@2.6.9, debug@^2.6.0, debug@^2.6.9:
   version "2.6.9"

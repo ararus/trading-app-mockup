@@ -107,7 +107,7 @@ export const OrderBook: FC<IOrderBookProps> = observer((props) => {
               <Dropdown
                 width={100}
                 source={dropdownSource}
-                initialSelectedItem={dropdownSource[0]}
+                defaultValue={dropdownSource[0]}
               />
             </FlexItem>
             <FlexItem>

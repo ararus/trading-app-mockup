@@ -2,8 +2,6 @@
 }
 
 .tamTokenSelector-expanderIcon {
-  width: 12px;
-  margin-top: 2px;
 }
 
 .tamTokenSelector-popup {
@@ -17,17 +15,11 @@
   position: relative;
 }
 
-.tamTokenSelector-searchIcon svg {
-  width: 12px;
-  margin-top: 4px;
-}
-
 .tamTokenSelector-gridList {
   max-height: 600px;
 }
 
 .tamTokenSelector-favoriteIcon {
-  width: 12px;
 }
 
 .tamTokenSelector-tokenPair {

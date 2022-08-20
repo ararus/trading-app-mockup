@@ -18,7 +18,7 @@ export const OrderForm: FC<IOrderForm> = (props) => {
     <div>
       <Card className={"tam-orderForm"}>
         <FlexLayout direction="column">
-          <Tabstrip tabIndex={selectedTabIndex} onChange={onTabChange}>
+          <Tabstrip tabIndex={selectedTabIndex} onActiveChange={onTabChange}>
             {tabs.map((tab, i) => (
               <Tab label={tab} key={i} />
             ))}
