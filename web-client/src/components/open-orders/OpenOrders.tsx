@@ -1,16 +1,50 @@
 import { Card, makePrefixer } from "@jpmorganchase/uitk-core";
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { RowSelectionColumn, Table, TableColumn } from "../common";
+import {
+  RowSelectionColumn,
+  Table,
+  TableCellValueProps,
+  TableColumn,
+} from "../common";
 import { useStore } from "../../store";
 import { OpenOrder } from "../../store/OpenOrdersStore";
 import "./OpenOrders.css";
+import cn from "classnames";
 
 const withBaseName = makePrefixer("tamOpenOrders");
 
 export interface IOpenOrdersProps {}
 
 const rowKeyGetter = (x: OpenOrder) => x.id;
+
+const sideValueGetter = ({ side }: OpenOrder) => {
+  return (
+    <span
+      className={cn(withBaseName("side"), {
+        [withBaseName("side-sell")]: side === "Sell",
+        [withBaseName("side-buy")]: side === "Buy",
+      })}
+    >
+      {side}
+    </span>
+  );
+};
+
+const TimeCellValue: FC<TableCellValueProps> = (props) => {
+  const time = props.value as Date;
+  return (
+    <div>
+      {time.toLocaleTimeString(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })}
+    </div>
+  );
+};
+
+const priceValueGetter = (x: OpenOrder) => x.price;
 
 export const OpenOrders: FC<IOpenOrdersProps> = observer((props) => {
   const { openOrders } = useStore();
@@ -23,6 +57,7 @@ export const OpenOrders: FC<IOpenOrdersProps> = observer((props) => {
         className={withBaseName("table")}
         rowData={data}
         rowKeyGetter={rowKeyGetter}
+        isZebra={true}
       >
         <RowSelectionColumn id={"rowSelection"} />
         <TableColumn
@@ -35,23 +70,26 @@ export const OpenOrders: FC<IOpenOrdersProps> = observer((props) => {
           id={"side"}
           name={"Side"}
           defaultWidth={100}
-          getValue={(x) => x.side}
+          getValue={sideValueGetter}
         />
         <TableColumn
           id={"price"}
           name={"Price"}
+          align={"right"}
           defaultWidth={100}
-          getValue={(x) => x.price}
+          getValue={priceValueGetter}
         />
         <TableColumn
           id={"amount"}
           name={"Amount"}
+          align={"right"}
           defaultWidth={100}
           getValue={(x) => x.amount}
         />
         <TableColumn
           id={"failed"}
           name={"Failed"}
+          align={"right"}
           defaultWidth={100}
           getValue={(x) => x.failed}
         />
@@ -59,9 +97,9 @@ export const OpenOrders: FC<IOpenOrdersProps> = observer((props) => {
           id={"time"}
           name={"Time"}
           defaultWidth={100}
-          getValue={(x) => x.time.toString()}
+          getValue={(x) => x.time}
+          cellValueComponent={TimeCellValue}
         />
-        {/*<SpaceFillColumn id={"spaceFill"} />*/}
       </Table>
     </Card>
   );

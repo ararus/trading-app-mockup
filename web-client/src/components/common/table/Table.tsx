@@ -632,6 +632,7 @@ export const Table = (props: TableProps) => {
                 hoverOverRowKey={hoverRowKey}
                 setHoverOverRowKey={setHoverRowKey}
                 midGap={midGap}
+                isZebra={isZebra}
               />
               <TopPart
                 columns={headVisibleColumns}
@@ -648,6 +649,7 @@ export const Table = (props: TableProps) => {
                 isRaised={isLeftRaised}
                 hoverOverRowKey={hoverRowKey}
                 setHoverOverRowKey={setHoverRowKey}
+                isZebra={isZebra}
               />
               <RightPart
                 rightRef={rightRef}
@@ -657,6 +659,7 @@ export const Table = (props: TableProps) => {
                 isRaised={isRightRaised}
                 hoverOverRowKey={hoverRowKey}
                 setHoverOverRowKey={setHoverRowKey}
+                isZebra={isZebra}
               />
               <TopLeftPart
                 onWheel={onWheel}

@@ -1,11 +1,11 @@
-import { FC, MouseEventHandler } from "react";
+import { MouseEventHandler } from "react";
 import "./TableRow.css";
 import { BaseCell } from "../BaseCell";
 import { makePrefixer } from "@jpmorganchase/uitk-core";
 import cn from "classnames";
-import { TableCellValueProps } from "../TableColumn";
 import { TableColumnModel, TableRowModel } from "../Table";
 import { FakeCell } from "./FakeCell";
+import { DefaultCellValue } from "./DefaultCellValue";
 
 const withBaseName = makePrefixer("uitkTableTableRow");
 
@@ -20,11 +20,6 @@ export interface TableRowProps {
   onMouseLeave?: MouseEventHandler<HTMLTableRowElement>;
   gap?: number;
 }
-
-const DefaultCellValue: FC<TableCellValueProps> = (props) => {
-  const { value } = props;
-  return <div>{value}</div>;
-};
 
 export const TableRow = function TableRow(props: TableRowProps) {
   const {

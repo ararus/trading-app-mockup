@@ -17,3 +17,4 @@ export * from "./utils";
 export * from "./FakeCell";
 export * from "./FakeGroupCell";
 export * from "./FakeHeaderCell";
+export * from "./DefaultCellValue";

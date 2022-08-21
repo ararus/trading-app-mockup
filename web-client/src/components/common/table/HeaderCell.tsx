@@ -37,7 +37,13 @@ export function HeaderCell(props: HeaderCellProps) {
       className={cn(withBaseName(), column.info.props.headerClassName)}
       role="columnheader"
     >
-      <div className={withBaseName("valueContainer")}>{children}</div>
+      <div
+        className={cn(withBaseName("valueContainer"), {
+          [withBaseName("alignRight")]: column.info.props.align === "right",
+        })}
+      >
+        {children}
+      </div>
       <HeaderCellSeparator separatorType={separator} />
       <div
         className={withBaseName("resizeHandle")}

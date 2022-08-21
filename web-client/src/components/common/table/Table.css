@@ -264,11 +264,11 @@
   /*width: 800px;*/
   position: relative;
   outline: none;
-  border-collapse: collapse;
 }
 
 .uitkTable table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .uitkTable-framed {

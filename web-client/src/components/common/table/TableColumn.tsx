@@ -23,7 +23,7 @@ export interface TableCellProps {
 export interface TableCellValueProps {
   row: TableRowModel;
   column: TableColumnModel;
-  value?: ReactNode;
+  value?: any;
 }
 
 export interface TableHeaderValueProps {
@@ -34,12 +34,12 @@ export interface TableColumnProps {
   id: string;
   name?: string;
   defaultWidth?: number;
-  //width?: number;
   onWidthChanged?: (width: number) => void;
   pinned?: TableColumnPin;
+  align?: "left" | "right";
   cellComponent?: ComponentType<TableCellProps>;
   cellValueComponent?: ComponentType<TableCellValueProps>;
-  getValue?: (rowData: any) => ReactNode;
+  getValue?: (rowData: any) => any;
   headerClassName?: string;
   headerComponent?: ComponentType<HeaderCellProps>;
   headerValueComponent?: ComponentType<TableHeaderValueProps>;

@@ -6,3 +6,18 @@
   height: 300px;
   width: 100%;
 }
+
+.tamOpenOrders-side {
+}
+
+.tamOpenOrders-side-buy {
+  color: var(--tam-positive-color);
+}
+
+.tamOpenOrders-side-sell {
+  color: var(--tam-negative-color);
+}
+
+.tamOpenOrders-numericCell {
+  text-align: right;
+}

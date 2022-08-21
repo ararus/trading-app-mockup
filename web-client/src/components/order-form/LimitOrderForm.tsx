@@ -22,10 +22,10 @@ export const LimitOrderForm: FC<ILimitOrderForm> = observer((props) => {
   const { orderForm, currentTokenPrice, tokenSelector } = rootStore;
   const { selectedTokenPair } = tokenSelector;
 
-  const buySellIndex = orderForm.side === "buy" ? 0 : 1;
+  const buySellIndex = orderForm.side === "Buy" ? 0 : 1;
 
   const onBuySellChange = (_: any, index: number) => {
-    orderForm.setSide(index === 0 ? "buy" : "sell");
+    orderForm.setSide(index === 0 ? "Buy" : "Sell");
   };
 
   const buyPriceText = currentTokenPrice ? currentTokenPrice.toFixed(4) : "?";

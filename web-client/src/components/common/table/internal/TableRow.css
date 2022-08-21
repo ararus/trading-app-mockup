@@ -1,15 +1,21 @@
 .uitkTableTableRow {
+  height: var(--uitkTable-rowHeight);
+  /* Row border doesn't render properly in Chrome on Windows. Applying borders to cells */
+  --row-border-color: var(--uitkTable-rowDivider-color);
+}
+
+.uitkTableTableRow td, .uitkTableTableRow th {
   border-style: solid;
-  border-color: var(--uitkTable-rowDivider-color);
+  border-color: var(--row-border-color);
   border-width: 1px 0 0 0;
 }
 
 .uitkTableTableRow-selected + .uitkTableTableRow {
-  border-color: var(--uitkTable-row-borderColor-selected);
+  --row-border-color: var(--uitkTable-row-borderColor-selected);
 }
 
 .uitkTableTableRow-divided {
-  border-color: var(--uitkTable-rowDivider-color-divided);
+  --row-border-color: var(--uitkTable-rowDivider-color-divided);
 }
 
 .uitkTableTableRow-zebra {
@@ -22,37 +28,21 @@
 
 .uitkTableTableRow-selected {
   background: var(--uitkTable-row-backgroundColor-selected);
-  border-color: var(--uitkTable-row-borderColor-selected);
+  --row-border-color: var(--uitkTable-row-borderColor-selected);
 }
 
 .uitkTableTableRow-zebra.uitkTableTableRow-selected {
-  background: linear-gradient(
-    var(--uitkTable-row-backgroundColor-selected),
-    var(--uitkTable-row-backgroundColor-selected)),
-  linear-gradient(
-    var(--uitkTable-zebraColor),
-    var(--uitkTable-zebraColor)
-  );
+  background: var(--uitkTable-row-backgroundColor-selected);
 }
 
 .uitkTableTableRow-zebra.uitkTableTableRow-hover {
-  background: linear-gradient(
-    var(--uitkTable-row-backgroundColor-hover), var(--uitkTable-row-backgroundColor-hover)),
-  linear-gradient(var(--uitkTable-zebraColor), var(--uitkTable-zebraColor));
+  background: var(--uitkTable-row-backgroundColor-hover);
 }
 
 .uitkTableTableRow-zebra.uitkTableTableRow-selected.uitkTableTableRow-hover {
-  background: linear-gradient(
-    var(--uitkTable-row-backgroundColor-hover), var(--uitkTable-row-backgroundColor-hover)),
-  linear-gradient(
-    var(--uitkTable-row-backgroundColor-selected), var(--uitkTable-row-backgroundColor-selected)),
-  linear-gradient(
-    var(--uitkTable-zebraColor), var(--uitkTable-zebraColor));
+  background: var(--uitkTable-row-backgroundColor-hover);
 }
 
 .uitkTableTableRow-selected.uitkTableTableRow-hover {
-  background: linear-gradient(
-    var(--uitkTable-row-backgroundColor-hover), var(--uitkTable-row-backgroundColor-hover)),
-  linear-gradient(
-    var(--uitkTable-row-backgroundColor-selected), var(--uitkTable-row-backgroundColor-selected));
+  background: var(--uitkTable-row-backgroundColor-hover);
 }

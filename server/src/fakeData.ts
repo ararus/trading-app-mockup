@@ -22,6 +22,16 @@ function makePairs() {
 
 const MAX_PRICE_USD = 100000;
 
+function randomItem<T>(source: T[]) {
+  const idx = Math.floor(Math.random() * source.length);
+  return source[idx];
+}
+
+function randomNumber(min: number, max: number, dp: number) {
+  const m = Math.pow(10, dp);
+  return Math.round(m * Math.random() * (max - min) + min) / m;
+}
+
 function makePrices(tokens: string[]) {
   const prices: ITokenPrice[] = tokens.map((token) => ({
     token,
@@ -111,18 +121,21 @@ export class DummyServer {
   }
 
   public getOpenOrders(): Observable<IOpenOrders> {
-    return timer(0, 2000).pipe(
+    return timer(0, 1000).pipe(
       map(() => {
         const items = [];
         for (let i = 0; i < 100; i++) {
+          const { baseToken, quoteToken } = randomItem(this._tokenPairs);
+          const tokenPair = [baseToken, quoteToken].join("/");
+
           items.push({
             id: `order${i + 1}`,
-            price: Math.random(),
-            failed: Math.random(),
+            price: randomNumber(1, 100000, 4),
+            failed: randomNumber(1, 100000, 4),
             time: new Date().toISOString(),
-            amount: Math.random(),
-            side: "Buy",
-            tokenPair: "???/???",
+            amount: randomNumber(1, 1000, 4),
+            side: Math.random() < 0.5 ? "Buy" : "Sell",
+            tokenPair,
           });
         }
         return {
