@@ -26,21 +26,37 @@ app.use(route.get("/healthcheck", (ctx) => (ctx.body = "OK")));
 
 const dummy = new DummyServer();
 
-const subscriptions = new Map<string, Subscription>();
+class Client {
+  public id: string;
+  public subscriptions: Map<string, Subscription>;
+
+  constructor(id: string) {
+    this.id = id;
+    this.subscriptions = new Map();
+  }
+}
+
+const clients = new Map<WebSocket, Client>();
 
 // WS routes
 app.ws.use(
   route.all("/api/ws", (ctx) => {
     try {
-      console.log(`Client connected`);
+      const id = uuid.v4();
+      const client = new Client(id);
+      clients.set(ctx.websocket, client);
+      console.log(`Client connected. Id: "${id}"`);
+
       ctx.websocket.on("message", (rawMessage: any) => {
+        const client = clients.get(ctx.websocket)!;
         const message = JSON.parse(rawMessage);
+        console.log(`Message from client "${client.id}": ${message.type}`);
 
         if (message.type === "unsubscribe") {
-          subscriptions.get(message.key)!.unsubscribe();
+          client.subscriptions.get(message.key)!.unsubscribe();
         } else {
           if (message.name === "tokenPairs") {
-            subscriptions.set(
+            client.subscriptions.set(
               message.key,
               dummy.getTokenPairs().subscribe((tokenPairs) => {
                 ctx.websocket.send(
@@ -53,7 +69,7 @@ app.ws.use(
               })
             );
           } else if (message.name === "tokenPrices") {
-            subscriptions.set(
+            client.subscriptions.set(
               message.key,
               dummy.getPriceStream().subscribe((prices) => {
                 ctx.websocket.send(
@@ -66,7 +82,7 @@ app.ws.use(
               })
             );
           } else if (message.name === "orderBook") {
-            subscriptions.set(
+            client.subscriptions.set(
               message.key,
               dummy.getOrderBook
                 .apply(dummy, message.data)
@@ -81,7 +97,7 @@ app.ws.use(
                 })
             );
           } else if (message.name === "openOrders") {
-            subscriptions.set(
+            client.subscriptions.set(
               message.key,
               dummy.getOpenOrders().subscribe((openOrders) => {
                 ctx.websocket.send(
@@ -96,11 +112,21 @@ app.ws.use(
           }
         }
       });
+
       ctx.websocket.on("close", () => {
+        const client = clients.get(ctx.websocket)!;
+        for (let s of client.subscriptions.values()) {
+          s.unsubscribe();
+        }
+        clients.delete(ctx.websocket);
         console.log(`Client disconnected`);
       });
+
+      ctx.websocket.on("error", () => {
+        console.log(`WEBSOCKET ERROR`);
+      });
     } catch (e) {
-      console.log(`Error`, e);
+      console.log(`ERROR`, e);
     }
   })
 );

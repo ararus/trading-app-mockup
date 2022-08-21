@@ -109,6 +109,7 @@ export const Table = (props: TableProps) => {
   const rightRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const [scrollSource, setScrollSource] = useState<"user" | "table">("user");
   const [scrollLeft, setScrollLeft] = useState<number>(0);
   const [scrollTop, setScrollTop] = useState<number>(0);
 
@@ -204,7 +205,7 @@ export const Table = (props: TableProps) => {
   const botHeight = useProd([botRowCount, rowHeight]);
   const totalHeight = useSum([topHeight, midHeight, botHeight]);
   const clientMidWidth = useClientMidWidth(clientWidth, leftWidth, rightWidth);
-  const midGap = Math.max(0, clientMidWidth - midWidth);
+  const midGap = Math.max(0, Math.floor(clientMidWidth - midWidth));
 
   const bodyVisColRng = useBodyVisibleColumnRange(
     midCols,
@@ -436,15 +437,27 @@ export const Table = (props: TableProps) => {
   const cursorRowIdx =
     cursorRowKey === undefined ? 0 : rowIdxByKey.get(cursorRowKey) || 0;
 
+  const scroll = useCallback(
+    (left?: number, top?: number, source?: "user" | "table") => {
+      setScrollSource(source || "user");
+      if (left !== undefined) {
+        setScrollLeft(left);
+      }
+      if (top !== undefined) {
+        setScrollTop(top);
+      }
+    },
+    [setScrollLeft, setScrollTop, setScrollSource]
+  );
+
   const scrollToCell = useScrollToCell(
     visRowRng,
-    setScrollTop,
     rowHeight,
     clientMidHeight,
     midCols,
     bodyVisColRng,
-    setScrollLeft,
-    clientMidWidth
+    clientMidWidth,
+    scroll
   );
 
   const moveCursor = useCallback(
@@ -615,8 +628,8 @@ export const Table = (props: TableProps) => {
               <Scrollable
                 scrollLeft={scrollLeft}
                 scrollTop={scrollTop}
-                setScrollLeft={setScrollLeft}
-                setScrollTop={setScrollTop}
+                scrollSource={scrollSource}
+                scroll={scroll}
                 scrollerRef={scrollableRef}
                 topRef={topRef}
                 rightRef={rightRef}

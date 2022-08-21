@@ -1,3 +1,7 @@
+body {
+  --uitk-zindex-tooltip: 1500;
+}
+
 .uitk-light {
   --tam-positive-color: var(--uitk-color-green-600);
   --tam-positive-color-active: var(--uitk-color-green-400);

@@ -379,22 +379,21 @@ export const clamp = (x: number, min: number, max: number) => {
 
 export const useScrollToCell = (
   visRowRng: Rng,
-  setScrollTop: SetState<number>,
   rowHeight: number,
   clientMidHt: number,
   midCols: TableColumnModel[],
   bodyVisColRng: Rng,
-  setScrollLeft: SetState<number>,
-  clientMidWidth: number
+  clientMidWidth: number,
+  scroll: (left?: number, top?: number, source?: "user" | "table") => void
 ) =>
   useCallback(
     (rowIdx: number, colIdx: number) => {
+      let x: number | undefined = undefined;
+      let y: number | undefined = undefined;
       if (rowIdx <= visRowRng.start) {
-        setScrollTop(rowHeight * rowIdx);
+        y = rowHeight * rowIdx;
       } else if (rowIdx >= visRowRng.end - 1) {
-        setScrollTop(
-          rowHeight * rowIdx - clientMidHt + rowHeight + scrollBarSize
-        );
+        y = rowHeight * rowIdx - clientMidHt + rowHeight + scrollBarSize;
       }
       const isMidCol =
         midCols.length > 0 &&
@@ -407,25 +406,27 @@ export const useScrollToCell = (
           for (let i = 0; i < midColIdx; ++i) {
             w += midCols[i].info.width;
           }
-          setScrollLeft(w);
+          x = w;
         } else if (midColIdx >= bodyVisColRng.end - 1) {
           let w = 0;
           for (let i = 0; i <= midColIdx; ++i) {
             w += midCols[i].info.width;
           }
-          setScrollLeft(w - clientMidWidth + scrollBarSize);
+          x = w - clientMidWidth + scrollBarSize;
         }
+      }
+      if (x !== undefined || y !== undefined) {
+        scroll(x, y, "table");
       }
     },
     [
       visRowRng,
-      setScrollTop,
       rowHeight,
       clientMidHt,
       midCols,
       bodyVisColRng,
-      setScrollLeft,
       clientMidWidth,
+      scroll,
     ]
   );
 
