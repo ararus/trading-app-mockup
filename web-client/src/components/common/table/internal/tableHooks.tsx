@@ -1,4 +1,10 @@
-import { Children, isValidElement, useCallback, useMemo, useRef } from "react";
+import React, {
+  Children,
+  isValidElement,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import {
   Size,
   TableColumnGroupModel,
@@ -7,14 +13,15 @@ import {
 } from "../Table";
 import { ColumnGroupProps } from "../ColumnGroup";
 import { Rng } from "../Rng";
-import { TableColumnProps } from "../TableColumn";
+import { TableColumnInfo } from "../TableColumn";
+import { getAttribute } from "./utils";
 
 const sizeEquals = (a: Size, b: Size) => {
   return a.height === b.height && a.width === b.width;
 };
 
 const sumWidth = (columns: TableColumnModel[]) =>
-  columns.reduce((p, x) => p + x.data.width, 0);
+  columns.reduce((p, x) => p + x.info.width, 0);
 
 export const useSumWidth = (columns: TableColumnModel[]) =>
   useMemo(() => sumWidth(columns), [columns]);
@@ -25,7 +32,7 @@ export const useSum = (source: number[]) =>
 const sumRangeWidth = (columns: TableColumnModel[], range: Rng) => {
   let w = 0;
   range.forEach((i) => {
-    w += columns[i].data.width;
+    w += columns[i].info.width;
   });
   return w;
 };
@@ -50,7 +57,7 @@ export const useBodyVisibleColumnRange = (
     let width = scrollLeft;
     let start = 0;
     for (let i = 0; i < midColumns.length; ++i) {
-      const colWidth = midColumns[i].data.width;
+      const colWidth = midColumns[i].info.width;
       if (width > colWidth) {
         width -= colWidth;
       } else {
@@ -61,7 +68,7 @@ export const useBodyVisibleColumnRange = (
     }
     let end = start + 1;
     for (let i = start; i < midColumns.length; ++i) {
-      const colWidth = midColumns[i].data.width;
+      const colWidth = midColumns[i].info.width;
       width -= colWidth;
       end = i + 1;
       if (width <= 0) {
@@ -152,7 +159,7 @@ export const useLeftScrolledOutWidth = (
   useMemo(() => {
     let w = 0;
     for (let i = 0; i < bodyVisibleColumnRange.start; ++i) {
-      w += midColumns[i].data.width;
+      w += midColumns[i].info.width;
     }
     return w;
   }, [midColumns, bodyVisibleColumnRange]);
@@ -294,8 +301,8 @@ export const useVisibleColumnGroupRange = (
     }
     const firstVisibleCol = midCols[bodyVisColRng.start];
     const lastVisibleCol = midCols[bodyVisColRng.end - 1];
-    const firstVisibleGroup = midGrpByColId.get(firstVisibleCol.data.id);
-    const lastVisibleGroup = midGrpByColId.get(lastVisibleCol.data.id);
+    const firstVisibleGroup = midGrpByColId.get(firstVisibleCol.info.props.id);
+    const lastVisibleGroup = midGrpByColId.get(lastVisibleCol.info.props.id);
     if (!firstVisibleGroup || !lastVisibleGroup) {
       return Rng.empty;
     }
@@ -343,7 +350,7 @@ export const useHeadVisibleColumnRange = (
 };
 
 export const useCols = (
-  colPs: TableColumnProps[],
+  colInfos: TableColumnInfo[],
   startIdx: number,
   groups: TableColumnGroupModel[]
 ): TableColumnModel[] =>
@@ -352,13 +359,13 @@ export const useCols = (
     groups.forEach((g) => {
       edgeColIds.add(last(g.childrenIds));
     });
-    const cs: TableColumnModel[] = colPs.map((data, i) => ({
-      data,
+    const columnModels: TableColumnModel[] = colInfos.map((info, i) => ({
+      info,
       index: i + startIdx,
-      separator: edgeColIds.has(data.id) ? "groupEdge" : "regular",
+      separator: edgeColIds.has(info.props.id) ? "groupEdge" : "regular",
     }));
-    return cs;
-  }, [colPs, startIdx, groups]);
+    return columnModels;
+  }, [colInfos, startIdx, groups]);
 
 export const clamp = (x: number, min: number, max: number) => {
   if (x < min) {
@@ -398,13 +405,13 @@ export const useScrollToCell = (
         if (midColIdx <= bodyVisColRng.start) {
           let w = 0;
           for (let i = 0; i < midColIdx; ++i) {
-            w += midCols[i].data.width;
+            w += midCols[i].info.width;
           }
           setScrollLeft(w);
         } else if (midColIdx >= bodyVisColRng.end - 1) {
           let w = 0;
           for (let i = 0; i <= midColIdx; ++i) {
-            w += midCols[i].data.width;
+            w += midCols[i].info.width;
           }
           setScrollLeft(w - clientMidWidth + scrollBarSize);
         }
@@ -421,3 +428,76 @@ export const useScrollToCell = (
       clientMidWidth,
     ]
   );
+
+const MIN_COLUMN_WIDTH = 10;
+
+// TODO There might be some problems if column is removed while it is being resized
+export function useColumnResize<T>(
+  resizeColumn: (columnIndex: number, width: number) => void
+) {
+  const columnResizeDataRef = useRef<{
+    startX: number;
+    startY: number;
+    eventsUnsubscription: () => void;
+    columnIndex: number;
+    initialColumnWidth: number;
+    resizeColumn: (columnIndex: number, width: number) => void;
+  }>();
+
+  const onMouseUp = useCallback(() => {
+    columnResizeDataRef.current?.eventsUnsubscription();
+    columnResizeDataRef.current = undefined;
+  }, []);
+
+  const onMouseMove = useCallback((event: MouseEvent) => {
+    const x = event.screenX;
+    const { startX, columnIndex, initialColumnWidth } =
+      columnResizeDataRef.current!;
+    const shift = x - startX;
+    let width = initialColumnWidth + shift;
+    if (width < MIN_COLUMN_WIDTH) {
+      width = MIN_COLUMN_WIDTH;
+    }
+    columnResizeDataRef.current!.resizeColumn(columnIndex, Math.round(width));
+  }, []);
+
+  return useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      const targetElement = event.target as HTMLElement;
+      const [columnIndexAttribute, thElement] = getAttribute(
+        targetElement,
+        "data-column-index"
+      );
+
+      const columnIndex = parseInt(columnIndexAttribute, 10);
+
+      document.addEventListener("mouseup", onMouseUp);
+      document.addEventListener("mousemove", onMouseMove);
+
+      const initialColumnWidth = thElement.getBoundingClientRect().width;
+
+      columnResizeDataRef.current = {
+        startX: event.screenX,
+        startY: event.screenY,
+        eventsUnsubscription: () => {
+          document.removeEventListener("mouseup", onMouseUp);
+          document.removeEventListener("mousemove", onMouseMove);
+        },
+        columnIndex,
+        initialColumnWidth,
+        resizeColumn,
+      };
+
+      event.preventDefault();
+    },
+    [resizeColumn]
+  );
+}
+
+export function useFlatten<T>(map: Map<number, T>): T[] {
+  return useMemo(() => {
+    const entries = [...map.entries()].filter(([index, value]) => !!value);
+    entries.sort((a, b) => a[0] - b[0]);
+    return entries.map((x) => x[1]);
+  }, [map]);
+}

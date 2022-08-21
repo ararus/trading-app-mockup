@@ -9,7 +9,7 @@ import { Cursor } from "./internal";
 const withBaseName = makePrefixer("uitkTableBaseCell");
 
 export function getCellId(rowKey: string, column: TableColumnModel) {
-  return `R${rowKey}C${column.data.id}`;
+  return `R${rowKey}C${column.info.props.id}`;
 }
 
 export const BaseCell: FC<TableCellProps> = function BaseCell(props) {

@@ -15,7 +15,9 @@ export function TableColGroup(props: TableColGroupProps) {
   return (
     <colgroup>
       {columns.map((column) => {
-        return <TableCol key={column.data.id} width={column.data.width} />;
+        return (
+          <TableCol key={column.info.props.id} width={column.info.width} />
+        );
       })}
       {gap !== undefined && gap > 0 ? (
         <TableCol key={"__gap"} width={gap} />

@@ -61,15 +61,16 @@ export const TableRow = function TableRow(props: TableRowProps) {
       role="row"
     >
       {columns.map((column, i) => {
-        const Cell = column.data.cellComponent || BaseCell;
-        const CellValue = column.data.cellValueComponent || DefaultCellValue;
-        const value = column.data.getValue
-          ? column.data.getValue(row.data)
+        const Cell = column.info.props.cellComponent || BaseCell;
+        const CellValue =
+          column.info.props.cellValueComponent || DefaultCellValue;
+        const value = column.info.props.getValue
+          ? column.info.props.getValue(row.data)
           : null;
-        const isFocused = cursorColKey === column.data.id;
+        const isFocused = cursorColKey === column.info.props.id;
         return (
           <Cell
-            key={column.data.id}
+            key={column.info.props.id}
             row={row}
             column={column}
             isFocused={isFocused}

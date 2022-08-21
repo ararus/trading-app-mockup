@@ -17,10 +17,11 @@ export function HeaderRow<T>(props: HeaderRowProps<T>) {
   return (
     <tr className={withBaseName()}>
       {columns.map((column) => {
-        const Cell = column.data.headerComponent || HeaderCell;
-        const CellValue = column.data.headerValueComponent || HeaderCellValue;
+        const Cell = column.info.props.headerComponent || HeaderCell;
+        const CellValue =
+          column.info.props.headerValueComponent || HeaderCellValue;
         return (
-          <Cell key={column.data.id} column={column}>
+          <Cell key={column.info.props.id} column={column}>
             <CellValue column={column} />
           </Cell>
         );

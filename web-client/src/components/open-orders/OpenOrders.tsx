@@ -28,37 +28,37 @@ export const OpenOrders: FC<IOpenOrdersProps> = observer((props) => {
         <TableColumn
           id={"tokenPair"}
           name={"Token Pair"}
-          width={100}
+          defaultWidth={100}
           getValue={(x) => x.tokenPair}
         />
         <TableColumn
           id={"side"}
           name={"Side"}
-          width={100}
+          defaultWidth={100}
           getValue={(x) => x.side}
         />
         <TableColumn
           id={"price"}
           name={"Price"}
-          width={100}
+          defaultWidth={100}
           getValue={(x) => x.price}
         />
         <TableColumn
           id={"amount"}
           name={"Amount"}
-          width={100}
+          defaultWidth={100}
           getValue={(x) => x.amount}
         />
         <TableColumn
           id={"failed"}
           name={"Failed"}
-          width={100}
+          defaultWidth={100}
           getValue={(x) => x.failed}
         />
         <TableColumn
           id={"time"}
           name={"Time"}
-          width={100}
+          defaultWidth={100}
           getValue={(x) => x.time.toString()}
         />
         {/*<SpaceFillColumn id={"spaceFill"} />*/}

@@ -1,18 +1,17 @@
-import {
+import React, {
   Children,
   isValidElement,
   KeyboardEventHandler,
   ReactNode,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   WheelEventHandler,
 } from "react";
 import { makePrefixer } from "@jpmorganchase/uitk-core";
-import { TableColumnProps } from "./TableColumn";
+import { TableColumnInfo } from "./TableColumn";
 import { TableContext } from "./TableContext";
 import cx from "classnames";
 import {
@@ -33,6 +32,8 @@ import {
   useCols,
   useColumnGroups,
   useColumnRange,
+  useColumnResize,
+  useFlatten,
   useHeadVisibleColumnRange,
   useLeftScrolledOutWidth,
   useProd,
@@ -80,7 +81,8 @@ export interface TableRowModel {
 export interface TableColumnModel {
   index: number;
   separator: ColumnSeparatorType;
-  data: TableColumnProps;
+
+  info: TableColumnInfo;
 }
 
 export interface TableColumnGroupModel {
@@ -90,14 +92,6 @@ export interface TableColumnGroupModel {
   rowSeparator: ColumnGroupRowSeparatorType;
   columnSeparator: ColumnGroupColumnSeparatorType;
   colSpan: number;
-}
-
-function useFlatten<T>(map: Map<number, T>): T[] {
-  return useMemo(() => {
-    const entries = [...map.entries()].filter(([index, value]) => !!value);
-    entries.sort((a, b) => a[0] - b[0]);
-    return entries.map((x) => x[1]);
-  }, [map]);
 }
 
 export const Table = (props: TableProps) => {
@@ -118,13 +112,13 @@ export const Table = (props: TableProps) => {
   const [scrollLeft, setScrollLeft] = useState<number>(0);
   const [scrollTop, setScrollTop] = useState<number>(0);
 
-  const [leftColMap, setLeftColMap] = useState<Map<number, TableColumnProps>>(
+  const [leftColMap, setLeftColMap] = useState<Map<number, TableColumnInfo>>(
     new Map()
   );
-  const [rightColMap, setRightColMap] = useState<Map<number, TableColumnProps>>(
+  const [rightColMap, setRightColMap] = useState<Map<number, TableColumnInfo>>(
     new Map()
   );
-  const [midColMap, setMidColMap] = useState<Map<number, TableColumnProps>>(
+  const [midColMap, setMidColMap] = useState<Map<number, TableColumnInfo>>(
     new Map()
   );
   const [leftGrpMap, setLeftGrpMap] = useState<Map<number, ColumnGroupProps>>(
@@ -137,9 +131,9 @@ export const Table = (props: TableProps) => {
     new Map()
   );
 
-  const leftColPs = useFlatten(leftColMap);
-  const rightColPs = useFlatten(rightColMap);
-  const midColPs = useFlatten(midColMap);
+  const leftColInfos = useFlatten(leftColMap);
+  const rightColInfos = useFlatten(rightColMap);
+  const midColInfos = useFlatten(midColMap);
 
   const leftGrpPs = useFlatten(leftGrpMap);
   const rightGrpPs = useFlatten(rightGrpMap);
@@ -149,10 +143,12 @@ export const Table = (props: TableProps) => {
 
   const [clientWidth, setClientWidth] = useState(0);
   const [clientHeight, setClientHeight] = useState(0);
+
   const [selRowKeys, setSelRowKeys] = useState<Set<string>>(new Set());
   const [lastSelRowKey, setLastSelRowKey] = useState<string | undefined>(
     undefined
   );
+
   const [rowHeight, setRowHeight] = useState<number>(0);
 
   const [cursorRowKey, setCursorRowKey] = useState<string | undefined>(
@@ -171,20 +167,23 @@ export const Table = (props: TableProps) => {
     leftGroups.length + midGroups.length
   );
 
-  const leftCols: TableColumnModel[] = useCols(leftColPs, 0, leftGroups);
+  const leftCols: TableColumnModel[] = useCols(leftColInfos, 0, leftGroups);
   const midCols: TableColumnModel[] = useCols(
-    midColPs,
+    midColInfos,
     leftCols.length,
     midGroups
   );
   const rightCols: TableColumnModel[] = useCols(
-    rightColPs,
+    rightColInfos,
     leftCols.length + midCols.length,
     rightGroups
   );
 
   const midColsById = useMemo(
-    () => new Map<string, TableColumnModel>(midCols.map((c) => [c.data.id, c])),
+    () =>
+      new Map<string, TableColumnModel>(
+        midCols.map((c) => [c.info.props.id, c])
+      ),
     [midCols]
   );
 
@@ -349,11 +348,11 @@ export const Table = (props: TableProps) => {
     return idx;
   };
 
-  const onColumnAdded = useCallback((columnProps: TableColumnProps) => {
-    const { pinned = null } = columnProps;
-    const adder = (old: Map<number, TableColumnProps>) => {
+  const onColumnAdded = useCallback((columnInfo: TableColumnInfo) => {
+    const { pinned = null } = columnInfo.props;
+    const adder = (old: Map<number, TableColumnInfo>) => {
       const next = new Map(old);
-      next.set(getChildIndex(columnProps.id), columnProps);
+      next.set(getChildIndex(columnInfo.props.id), columnInfo);
       return next;
     };
     if (pinned === "left") {
@@ -364,6 +363,23 @@ export const Table = (props: TableProps) => {
       setMidColMap(adder);
     }
     // console.log(`Column added: "${columnProps.name}"`);
+  }, []);
+
+  const onColumnRemoved = useCallback((columnInfo: TableColumnInfo) => {
+    const { pinned } = columnInfo.props;
+    const remover = (old: Map<number, TableColumnInfo>) => {
+      const next = new Map(old);
+      next.delete(getChildIndex(columnInfo.props.id));
+      return next;
+    };
+    if (pinned === "left") {
+      setLeftColMap(remover);
+    } else if (pinned === "right") {
+      setRightColMap(remover);
+    } else {
+      setMidColMap(remover);
+    }
+    // console.log(`Column removed: "${columnProps.name}"`);
   }, []);
 
   const onColumnGroupAdded = useCallback((colGroupProps: ColumnGroupProps) => {
@@ -381,23 +397,6 @@ export const Table = (props: TableProps) => {
       setMidGrpMap(adder);
     }
     // console.log(`Group added: "${colGroupProps.name}"`);
-  }, []);
-
-  const onColumnRemoved = useCallback((columnProps: TableColumnProps) => {
-    const { pinned } = columnProps;
-    const remover = (old: Map<number, TableColumnProps>) => {
-      const next = new Map(old);
-      next.delete(getChildIndex(columnProps.id));
-      return next;
-    };
-    if (pinned === "left") {
-      setLeftColMap(remover);
-    } else if (pinned === "right") {
-      setRightColMap(remover);
-    } else {
-      setMidColMap(remover);
-    }
-    // console.log(`Column removed: "${columnProps.name}"`);
   }, []);
 
   const onColumnGroupRemoved = useCallback(
@@ -427,7 +426,8 @@ export const Table = (props: TableProps) => {
   );
 
   const colIdxByKey = useMemo(
-    () => new Map<string, number>(cols.map((c, i) => [c.data.id, c.index])),
+    () =>
+      new Map<string, number>(cols.map((c, i) => [c.info.props.id, c.index])),
     [cols]
   );
 
@@ -455,7 +455,7 @@ export const Table = (props: TableProps) => {
       rowIdx = clamp(rowIdx, 0, rowData.length - 1);
       colIdx = clamp(colIdx, 0, cols.length - 1);
       setCursorRowKey(rowKeyGetter(rowData[rowIdx]));
-      setCursorColKey(cols[colIdx].data.id);
+      setCursorColKey(cols[colIdx].info.props.id);
       scrollToCell(rowIdx, colIdx);
       rootRef.current?.focus();
     },
@@ -537,7 +537,7 @@ export const Table = (props: TableProps) => {
     setSelRowKeys(new Set());
   }, [setSelRowKeys]);
 
-  const selCtValue: SelectionContext = useMemo(
+  const selectionContext: SelectionContext = useMemo(
     () => ({
       selRowKeys,
       isAllSelected,
@@ -565,22 +565,23 @@ export const Table = (props: TableProps) => {
   const resizeColumn = useCallback(
     (colIdx: number, width: number) => {
       const col = cols[colIdx];
-      if (col.data.onWidthChanged) {
-        col.data.onWidthChanged(width);
-      }
+      col.info.onWidthChanged(width);
     },
     [cols]
   );
 
-  const sizingCtValue: SizingContext = useMemo(
+  const onResizeHandleMouseDown = useColumnResize(resizeColumn);
+
+  const sizingContext: SizingContext = useMemo(
     () => ({
       resizeColumn,
       rowHeight,
+      onResizeHandleMouseDown,
     }),
-    [resizeColumn, rowHeight]
+    [resizeColumn, rowHeight, onResizeHandleMouseDown]
   );
 
-  const layoutCtValue: LayoutContext = useMemo(
+  const layoutContext: LayoutContext = useMemo(
     () => ({
       totalHeight,
       totalWidth,
@@ -592,9 +593,9 @@ export const Table = (props: TableProps) => {
 
   return (
     <TableContext.Provider value={contextValue}>
-      <LayoutContext.Provider value={layoutCtValue}>
-        <SelectionContext.Provider value={selCtValue}>
-          <SizingContext.Provider value={sizingCtValue}>
+      <LayoutContext.Provider value={layoutContext}>
+        <SelectionContext.Provider value={selectionContext}>
+          <SizingContext.Provider value={sizingContext}>
             {props.children}
             <div
               className={cx(
