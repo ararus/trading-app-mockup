@@ -63,7 +63,7 @@ export function Scrollable<T>(props: ScrollableProps<T>) {
         scrollerRef.current.scrollLeft = scrollLeft;
       }
       if (scrollTop !== scrollerRef.current.scrollTop) {
-        console.log(`Scrollable.useEffect scrolling to ${scrollTop}`);
+        // console.log(`Scrollable.useEffect scrolling to ${scrollTop}`);
         scrollerRef.current.scrollTop = scrollTop;
       }
     }

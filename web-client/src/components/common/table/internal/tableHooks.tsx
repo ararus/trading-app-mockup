@@ -16,10 +16,6 @@ import { Rng } from "../Rng";
 import { TableColumnInfo } from "../TableColumn";
 import { getAttribute } from "./utils";
 
-const sizeEquals = (a: Size, b: Size) => {
-  return a.height === b.height && a.width === b.width;
-};
-
 const sumWidth = (columns: TableColumnModel[]) =>
   columns.reduce((p, x) => p + x.info.width, 0);
 
@@ -82,7 +78,7 @@ export const useBodyVisibleColumnRange = (
   }, [midColumns, scrollLeft, clientMidWidth]);
 
   if (!Rng.equals(prevRef.current, range)) {
-    console.log(`visibleColumnRange: ${range.toString()}`);
+    // console.log(`visibleColumnRange: ${range.toString()}`);
     prevRef.current = range;
   }
   return range;
@@ -186,17 +182,17 @@ export const useSelectRows = (
   useCallback(
     (rowIdx: number, shift: boolean, meta: boolean) => {
       const rowKey = rowKeyGetter(rowData[rowIdx]);
-      console.log(
-        `Selecting row #${rowIdx} ("${rowKey}"); ${shift ? "shift;" : ""}${
-          meta ? "meta" : ""
-        }`
-      );
+      // console.log(
+      //   `Selecting row #${rowIdx} ("${rowKey}"); ${shift ? "shift;" : ""}${
+      //     meta ? "meta" : ""
+      //   }`
+      // );
       const idxFrom =
         lastSelRowKey !== undefined && shift
           ? rowIdxByKey.get(lastSelRowKey)
           : undefined;
       if (idxFrom === undefined) {
-        console.log(`Selecting single item "${rowKey}"`);
+        // console.log(`Selecting single item "${rowKey}"`);
         if (!meta) {
           setSelRowKeys(new Set<string>([rowKey]));
           setLastSelRowKey(rowKey);
@@ -214,12 +210,12 @@ export const useSelectRows = (
           });
         }
       } else {
-        console.log(`Selecting range from "${lastSelRowKey}" to "${rowKey}"`);
+        // console.log(`Selecting range from "${lastSelRowKey}" to "${rowKey}"`);
         setSelRowKeys((p) => {
           const s = meta ? new Set<string>(p) : new Set<string>();
           const idxs = [rowIdxByKey.get(rowKey)!, idxFrom];
           idxs.sort((a, b) => a - b);
-          console.log(`Selecting indices: ${idxs}`);
+          // console.log(`Selecting indices: ${idxs}`);
           const rowKeys = [];
           for (let i = idxs[0]; i <= idxs[1]; ++i) {
             rowKeys.push(rowKeyGetter(rowData[i]));

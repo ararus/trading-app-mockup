@@ -38,10 +38,6 @@ export const TableRow = function TableRow(props: TableRowProps) {
     throw new Error(`Invalid row`);
   }
 
-  // if (row.index === 0) {
-  //   console.log(`Row0 price: ${row.data.price}`);
-  // }
-
   return (
     <tr
       className={cn(withBaseName(), {

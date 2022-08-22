@@ -28,9 +28,6 @@ export function HeaderCell(props: HeaderCellProps) {
   const { separator } = column;
   const { onResizeHandleMouseDown } = useSizingContext();
 
-  // const onResizeHandleMouseDown = useColumnResize();
-  // const onMoveHandleMouseDown = useColumnMove();
-
   return (
     <th
       data-column-index={column.index}

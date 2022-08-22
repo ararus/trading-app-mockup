@@ -64,6 +64,7 @@ export interface TableProps {
   isZebra?: boolean;
   rowData: any[];
   rowKeyGetter: (row: any) => string;
+  defaultSelectedRowKeys?: Set<string>;
   className?: string;
 }
 
@@ -95,7 +96,14 @@ export interface TableColumnGroupModel {
 }
 
 export const Table = (props: TableProps) => {
-  const { rowData, isZebra, className, rowKeyGetter, children } = props;
+  const {
+    rowData,
+    isZebra,
+    className,
+    rowKeyGetter,
+    children,
+    defaultSelectedRowKeys,
+  } = props;
 
   // if (rowData.length > 0) {
   //   console.log(`Row 0 price: ${rowData[0].price}`);
@@ -145,7 +153,9 @@ export const Table = (props: TableProps) => {
   const [clientWidth, setClientWidth] = useState(0);
   const [clientHeight, setClientHeight] = useState(0);
 
-  const [selRowKeys, setSelRowKeys] = useState<Set<string>>(new Set());
+  const [selRowKeys, setSelRowKeys] = useState<Set<string>>(
+    defaultSelectedRowKeys || new Set()
+  );
   const [lastSelRowKey, setLastSelRowKey] = useState<string | undefined>(
     undefined
   );
@@ -603,6 +613,10 @@ export const Table = (props: TableProps) => {
     }),
     [totalHeight, totalWidth]
   );
+
+  // console.log(
+  //   cols.map((c) => `"${c.info.props.name}": ${c.info.width}`).join("\n")
+  // );
 
   return (
     <TableContext.Provider value={contextValue}>

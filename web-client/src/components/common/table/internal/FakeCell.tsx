@@ -10,6 +10,6 @@ export const FakeCell: FC<FakeCellProps> = function FakeCell(props) {
       className={"uitkTableFakeCell"}
       data-row-index={row.index}
       data-column-index={-1}
-    ></td>
+    />
   );
 };

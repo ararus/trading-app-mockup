@@ -1,3 +1,3 @@
 export function FakeHeaderCell() {
-  return <th></th>;
+  return <th />;
 }
