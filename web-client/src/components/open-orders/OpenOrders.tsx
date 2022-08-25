@@ -57,7 +57,7 @@ export const OpenOrders: FC<IOpenOrdersProps> = observer((props) => {
         className={withBaseName("table")}
         rowData={data}
         rowKeyGetter={rowKeyGetter}
-        isZebra={true}
+        zebra={true}
       >
         <RowSelectionColumn id={"rowSelection"} />
         <TableColumn

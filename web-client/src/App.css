@@ -14,6 +14,7 @@ body {
   --tam-positive-color-active: var(--uitk-color-green-20);
   --tam-negative-color: var(--uitk-color-red-50);
   --tam-negative-color-active: var(--uitk-color-red-20);
+  color-scheme: dark;
 }
 
 .tamApp {

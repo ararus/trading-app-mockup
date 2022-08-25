@@ -21,13 +21,16 @@ export const BaseCell: FC<TableCellProps> = function BaseCell(props) {
       data-column-index={column.index}
       aria-colindex={column.index}
       role="gridcell"
-      className={cn(withBaseName(), className)}
+      className={cn(
+        withBaseName(),
+        {
+          [withBaseName("editable")]: column.info.props.editable,
+        },
+        className
+      )}
       style={style}
     >
       {isFocused ? <Cursor /> : null}
-      {/*{isColumnDivided ? (*/}
-      {/*  <div className={withBaseName("columnDivider")} />*/}
-      {/*) : null}*/}
       <div className={withBaseName("valueContainer")}>{children}</div>
     </td>
   );

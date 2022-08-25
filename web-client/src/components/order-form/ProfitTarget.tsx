@@ -9,36 +9,46 @@ import {
 } from "@jpmorganchase/uitk-core";
 import { CloseIcon } from "@jpmorganchase/uitk-icons";
 import "./ProfitTarget.css";
+import { ProfitTargetStore } from "../../store";
+import { NumericInput } from "../common";
 
-export interface IProfitTargetProps {}
+export interface IProfitTargetProps {
+  store: ProfitTargetStore;
+}
 
 export const ProfitTarget: FC<IProfitTargetProps> = (props) => {
+  const { store } = props;
+
   return (
     <>
       <FlexLayout direction={"row"} align={"center"} disableWrap>
         <FlexItem>
-          <FormField label={"Profit"}>
-            <Input
-              endAdornment={<StaticInputAdornment>%</StaticInputAdornment>}
-            />
-          </FormField>
+          <NumericInput
+            field={store.profit}
+            label={"Profit"}
+            endAdornment={<StaticInputAdornment>%</StaticInputAdornment>}
+          />
         </FlexItem>
         <FlexItem>
-          <FormField label={"Target price"}>
-            <Input
-              endAdornment={<StaticInputAdornment>USDT</StaticInputAdornment>}
-            />
-          </FormField>
+          <NumericInput
+            field={store.targetPrice}
+            label={"Target price"}
+            endAdornment={<StaticInputAdornment>USDT</StaticInputAdornment>}
+          />
         </FlexItem>
         <FlexItem>
-          <FormField label={"Amount to sell"}>
-            <Input
-              endAdornment={<StaticInputAdornment>%</StaticInputAdornment>}
-            />
-          </FormField>
+          <NumericInput
+            label={"Amount to sell"}
+            field={store.amountToSell}
+            endAdornment={<StaticInputAdornment>%</StaticInputAdornment>}
+          />
         </FlexItem>
         <FlexItem>
-          <Button className={"tam-removeProfitTarget"}>
+          <Button
+            disabled={!store.canDelete}
+            className={"tam-removeProfitTarget"}
+            onClick={store.delete}
+          >
             <CloseIcon />
           </Button>
         </FlexItem>

@@ -3,6 +3,7 @@ import { TableRow } from "./TableRow";
 import { TableColumnModel, TableRowModel } from "../Table";
 import { getCellPosition, getRowKeyAttribute } from "./utils";
 import { useSelectionContext } from "../SelectionContext";
+import { useEditorContext } from "../EditorContext";
 
 export interface TableBodyProps {
   columns: TableColumnModel[];
@@ -10,14 +11,16 @@ export interface TableBodyProps {
   hoverRowKey?: string;
   setHoverRowKey: (key: string | undefined) => void;
   gap?: number;
-  isZebra?: boolean;
+  zebra?: boolean;
 }
 
 export function TableBody(props: TableBodyProps) {
-  const { columns, rows, hoverRowKey, setHoverRowKey, gap, isZebra } = props;
+  const { columns, rows, hoverRowKey, setHoverRowKey, gap, zebra } = props;
 
   const { selRowKeys, selectRows, cursorRowKey, cursorColKey, moveCursor } =
     useSelectionContext();
+
+  const { editMode, startEditMode } = useEditorContext();
 
   const onRowMouseEnter: MouseEventHandler<HTMLTableRowElement> = (event) => {
     const target = event.target as HTMLElement;
@@ -40,11 +43,20 @@ export function TableBody(props: TableBodyProps) {
     event.stopPropagation();
   };
 
+  const onDoubleClick: MouseEventHandler<HTMLTableSectionElement> = (event) => {
+    startEditMode();
+  };
+
   return (
-    <tbody onMouseLeave={onMouseLeave} onMouseDown={onMouseDown}>
+    <tbody
+      onMouseLeave={onMouseLeave}
+      onMouseDown={onMouseDown}
+      onDoubleClick={onDoubleClick}
+    >
       {rows.map((row) => {
         const isSelected = selRowKeys.has(row.key);
         const cursorKey = cursorRowKey === row.key ? cursorColKey : undefined;
+        const editorColKey = editMode ? cursorKey : undefined;
         return (
           <TableRow
             key={row.key}
@@ -56,9 +68,9 @@ export function TableBody(props: TableBodyProps) {
             isSelected={isSelected}
             cursorColKey={cursorKey}
             gap={gap}
-            isZebra={isZebra && row.index % 2 == 0}
+            zebra={zebra && row.index % 2 == 0}
+            editorColKey={editorColKey}
             // backgroundVariant={backgroundVariant}
-            // isColumnDivided={isColumnDivided}
           />
         );
       })}

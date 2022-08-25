@@ -1,20 +1,22 @@
 import React, {
   Children,
   isValidElement,
+  ReactNode,
   useCallback,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import {
-  Size,
   TableColumnGroupModel,
   TableColumnModel,
   TableRowModel,
 } from "../Table";
 import { ColumnGroupProps } from "../ColumnGroup";
 import { Rng } from "../Rng";
-import { TableColumnInfo } from "../TableColumn";
-import { getAttribute } from "./utils";
+import { TableColumnInfo, TableColumnPin } from "../TableColumn";
+import { getAttribute, makeMapAdder, makeMapDeleter } from "./utils";
+import { TableContext } from "../TableContext";
 
 const sumWidth = (columns: TableColumnModel[]) =>
   columns.reduce((p, x) => p + x.info.width, 0);
@@ -39,14 +41,22 @@ export const useSumRangeWidth = (columns: TableColumnModel[], range: Rng) =>
 export const useProd = (source: number[]) =>
   useMemo(() => source.reduce((p, x) => p * x, 1), source);
 
+const useMemoRng = (fn: () => Rng, deps: any[]) => {
+  const prevRef = useRef<Rng>(Rng.empty);
+  const range = useMemo(fn, deps);
+  if (!Rng.equals(prevRef.current, range)) {
+    prevRef.current = range;
+  }
+  return prevRef.current;
+};
+
 // TODO rewrite this!!!
 export const useBodyVisibleColumnRange = (
   midColumns: TableColumnModel[],
   scrollLeft: number,
   clientMidWidth: number
-): Rng => {
-  const prevRef = useRef<Rng>(Rng.empty);
-  const range = useMemo(() => {
+): Rng =>
+  useMemoRng(() => {
     if (clientMidWidth === 0 || midColumns.length === 0) {
       return Rng.empty;
     }
@@ -76,13 +86,6 @@ export const useBodyVisibleColumnRange = (
     }
     return new Rng(start, end);
   }, [midColumns, scrollLeft, clientMidWidth]);
-
-  if (!Rng.equals(prevRef.current, range)) {
-    // console.log(`visibleColumnRange: ${range.toString()}`);
-    prevRef.current = range;
-  }
-  return range;
-};
 
 export const useClientMidWidth = (
   clientWidth: number,
@@ -119,9 +122,8 @@ export const useVisibleRowRange = (
   clientMidHeight: number,
   rowHeight: number,
   rowCount: number
-) => {
-  const prevRef = useRef<Rng>(Rng.empty);
-  const range = useMemo(() => {
+) =>
+  useMemoRng(() => {
     if (rowHeight < 1) {
       return Rng.empty;
     }
@@ -135,12 +137,6 @@ export const useVisibleRowRange = (
     }
     return new Rng(start, end);
   }, [scrollTop, clientMidHeight, rowHeight, rowCount]);
-  if (!Rng.equals(prevRef.current, range)) {
-    prevRef.current = range;
-    // console.log(`RowRange: ${range}`);
-  }
-  return prevRef.current;
-};
 
 export const useColumnRange = (
   columns: TableColumnModel[],
@@ -289,9 +285,8 @@ export const useVisibleColumnGroupRange = (
   midCols: TableColumnModel[],
   midGrpByColId: Map<string, TableColumnGroupModel>,
   leftGrpCount: number
-): Rng => {
-  const prevRef = useRef<Rng>(Rng.empty);
-  const range = useMemo(() => {
+): Rng =>
+  useMemoRng(() => {
     if (bodyVisColRng.length === 0) {
       return Rng.empty;
     }
@@ -307,13 +302,8 @@ export const useVisibleColumnGroupRange = (
       lastVisibleGroup.index + 1 - leftGrpCount
     );
   }, [bodyVisColRng, midCols, midGrpByColId, leftGrpCount]);
-  if (!Rng.equals(prevRef.current, range)) {
-    prevRef.current = range;
-  }
-  return prevRef.current;
-};
 
-function last<T>(source: T[]): T {
+export function last<T>(source: T[]): T {
   return source[source.length - 1];
 }
 
@@ -322,9 +312,8 @@ export const useHeadVisibleColumnRange = (
   visColGrps: TableColumnGroupModel[],
   midColsById: Map<string, TableColumnModel>,
   leftColCount: number
-) => {
-  const prevRef = useRef<Rng>(Rng.empty);
-  const range = useMemo(() => {
+) =>
+  useMemoRng(() => {
     if (visColGrps.length === 0) {
       return bodyVisColRng;
     }
@@ -339,11 +328,6 @@ export const useHeadVisibleColumnRange = (
     }
     return new Rng(firstColIdx - leftColCount, lastColIdx + 1 - leftColCount);
   }, [bodyVisColRng, visColGrps, midColsById, leftColCount]);
-  if (!Rng.equals(range, prevRef.current)) {
-    prevRef.current = range;
-  }
-  return prevRef.current;
-};
 
 export const useCols = (
   colInfos: TableColumnInfo[],
@@ -362,16 +346,6 @@ export const useCols = (
     }));
     return columnModels;
   }, [colInfos, startIdx, groups]);
-
-export const clamp = (x: number, min: number, max: number) => {
-  if (x < min) {
-    return min;
-  }
-  if (x > max) {
-    return max;
-  }
-  return x;
-};
 
 export const useScrollToCell = (
   visRowRng: Rng,
@@ -498,3 +472,140 @@ export function useFlatten<T>(map: Map<number, T>): T[] {
     return entries.map((x) => x[1]);
   }, [map]);
 }
+
+const useColMap = () => useState<Map<number, TableColumnInfo>>(new Map());
+const useGrpMap = () => useState<Map<number, ColumnGroupProps>>(new Map());
+
+// Instances of TableColumn and TableColumnGroup register/unregister themselves
+// using onColumnAdded, onColumnRemoved, onColumnGroupAdded, onColumnGroupRemoved
+// taken from context
+// The order of columns/groups is based on the order of "children" (Table.props children)
+export const useColumnRegistry = (children: ReactNode) => {
+  const [leftColMap, setLeftColMap] = useColMap();
+  const [rightColMap, setRightColMap] = useColMap();
+  const [midColMap, setMidColMap] = useColMap();
+
+  const [leftGrpMap, setLeftGrpMap] = useGrpMap();
+  const [rightGrpMap, setRightGrpMap] = useGrpMap();
+  const [midGrpMap, setMidGrpMap] = useGrpMap();
+
+  const leftColInfos = useFlatten(leftColMap);
+  const rightColInfos = useFlatten(rightColMap);
+  const midColInfos = useFlatten(midColMap);
+
+  const leftGrpPs = useFlatten(leftGrpMap);
+  const rightGrpPs = useFlatten(rightGrpMap);
+  const midGrpPs = useFlatten(midGrpMap);
+
+  const leftGroups = useColumnGroups(leftGrpPs, 0);
+  const midGroups = useColumnGroups(midGrpPs, leftGroups.length);
+  const rightGroups = useColumnGroups(
+    rightGrpPs,
+    leftGroups.length + midGroups.length
+  );
+
+  const leftCols: TableColumnModel[] = useCols(leftColInfos, 0, leftGroups);
+  const midCols: TableColumnModel[] = useCols(
+    midColInfos,
+    leftCols.length,
+    midGroups
+  );
+  const rightCols: TableColumnModel[] = useCols(
+    rightColInfos,
+    leftCols.length + midCols.length,
+    rightGroups
+  );
+
+  const chPosById = useRef<Map<string, number>>(new Map());
+
+  const indexChildren = () => {
+    const m = new Map<string, number>();
+    let i = 0;
+    const indexChildrenRec = (c: ReactNode) => {
+      if (!c) {
+        return;
+      }
+      Children.forEach(c, (x) => {
+        if (isValidElement(x) && x.props.id !== undefined) {
+          m.set(x.props.id, i);
+          i++;
+          indexChildrenRec(x.props.children);
+        }
+      });
+    };
+    indexChildrenRec(children);
+    return m;
+  };
+  chPosById.current = indexChildren();
+
+  const getChildIndex = (id: string): number => {
+    const idx = chPosById.current.get(id);
+    if (idx === undefined) {
+      throw new Error(`Unknown child id: "${id}"`);
+    }
+    return idx;
+  };
+
+  const getColMapSet = (pinned?: TableColumnPin) =>
+    pinned === "left"
+      ? setLeftColMap
+      : pinned === "right"
+      ? setRightColMap
+      : setMidColMap;
+
+  const onColumnAdded = useCallback((columnInfo: TableColumnInfo) => {
+    // console.log(
+    //   `Column added: "${columnInfo.props.name}"; pinned: ${columnInfo.props.pinned}`
+    // );
+    const { id, pinned } = columnInfo.props;
+    getColMapSet(pinned)(makeMapAdder(getChildIndex(id), columnInfo));
+  }, []);
+
+  const onColumnRemoved = useCallback((columnInfo: TableColumnInfo) => {
+    const { id, pinned } = columnInfo.props;
+    getColMapSet(pinned)(makeMapDeleter(getChildIndex(id)));
+    // console.log(`Column removed: "${columnProps.name}"`);
+  }, []);
+
+  const getGrpMapSet = (pinned?: TableColumnPin) =>
+    pinned === "left"
+      ? setLeftGrpMap
+      : pinned === "right"
+      ? setRightGrpMap
+      : setMidGrpMap;
+
+  const onColumnGroupAdded = useCallback((colGroupProps: ColumnGroupProps) => {
+    const { id, pinned } = colGroupProps;
+    getGrpMapSet(pinned)(makeMapAdder(getChildIndex(id), colGroupProps));
+    // console.log(`Group added: "${colGroupProps.name}"`);
+  }, []);
+
+  const onColumnGroupRemoved = useCallback(
+    (colGroupProps: ColumnGroupProps) => {
+      const { id, pinned } = colGroupProps;
+      getGrpMapSet(pinned)(makeMapDeleter(getChildIndex(id)));
+      // console.log(`Group removed: "${colGroupProps.name}"`);
+    },
+    []
+  );
+
+  const contextValue: TableContext = useMemo(
+    () => ({
+      onColumnAdded,
+      onColumnRemoved,
+      onColumnGroupAdded,
+      onColumnGroupRemoved,
+    }),
+    [onColumnAdded, onColumnRemoved, onColumnGroupAdded, onColumnGroupRemoved]
+  );
+
+  return {
+    leftCols,
+    midCols,
+    rightCols,
+    leftGroups,
+    midGroups,
+    rightGroups,
+    contextValue,
+  };
+};

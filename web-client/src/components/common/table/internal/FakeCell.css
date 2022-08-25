@@ -1,6 +1,10 @@
 .uitkTableFakeCell {
   box-sizing: border-box;
-  border-style: none;
+
+  border-style: solid;
+  border-color: var(--row-border-color);
+  border-width: 1px 0 0 0;
+
   overflow: hidden;
   margin: 0;
   padding: 0;

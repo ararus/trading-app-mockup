@@ -6,6 +6,7 @@ import cn from "classnames";
 import { TableColumnModel, TableRowModel } from "../Table";
 import { FakeCell } from "./FakeCell";
 import { DefaultCellValue } from "./DefaultCellValue";
+import { CellEditor } from "../CellEditor";
 
 const withBaseName = makePrefixer("uitkTableTableRow");
 
@@ -13,25 +14,27 @@ export interface TableRowProps {
   row: TableRowModel;
   isSelected?: boolean;
   isHoverOver?: boolean;
-  isZebra?: boolean;
+  zebra?: boolean;
   columns: TableColumnModel[];
   cursorColKey?: string;
   onMouseEnter?: MouseEventHandler<HTMLTableRowElement>;
   onMouseLeave?: MouseEventHandler<HTMLTableRowElement>;
   gap?: number;
+  editorColKey?: string;
 }
 
 export const TableRow = function TableRow(props: TableRowProps) {
   const {
     row,
     isSelected,
-    isZebra,
+    zebra,
     isHoverOver,
     columns,
     onMouseEnter,
     onMouseLeave,
     cursorColKey,
     gap,
+    editorColKey,
   } = props;
 
   if (!row.key) {
@@ -41,7 +44,7 @@ export const TableRow = function TableRow(props: TableRowProps) {
   return (
     <tr
       className={cn(withBaseName(), {
-        [withBaseName("zebra")]: isZebra,
+        [withBaseName("zebra")]: zebra,
         [withBaseName("hover")]: isHoverOver,
         [withBaseName("selected")]: isSelected,
       })}
@@ -52,20 +55,21 @@ export const TableRow = function TableRow(props: TableRowProps) {
       role="row"
     >
       {columns.map((column, i) => {
+        const colKey = column.info.props.id;
+        if (editorColKey === colKey) {
+          const Editor = column.info.props.editorComponent || CellEditor;
+          return <Editor key={colKey} />;
+        }
+
         const Cell = column.info.props.cellComponent || BaseCell;
         const CellValue =
           column.info.props.cellValueComponent || DefaultCellValue;
         const value = column.info.props.getValue
           ? column.info.props.getValue(row.data)
           : null;
-        const isFocused = cursorColKey === column.info.props.id;
+        const isFocused = cursorColKey === colKey;
         return (
-          <Cell
-            key={column.info.props.id}
-            row={row}
-            column={column}
-            isFocused={isFocused}
-          >
+          <Cell key={colKey} row={row} column={column} isFocused={isFocused}>
             <CellValue column={column} row={row} value={value} />
           </Cell>
         );

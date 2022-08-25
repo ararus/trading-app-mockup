@@ -28,3 +28,35 @@ export function getCellPosition(element: HTMLElement): [number, number] {
   const columnIndex = parseInt(columnIndexAttr, 10);
   return [rowIndex, columnIndex];
 }
+
+const addMapItem = <K, V>(old: Map<K, V>, k: K, v: V): Map<K, V> => {
+  const m = new Map(old);
+  m.set(k, v);
+  return m;
+};
+
+export const makeMapAdder =
+  <K, V>(k: K, v: V) =>
+  (old: Map<K, V>) =>
+    addMapItem(old, k, v);
+
+const deleteMapItem = <K, V>(old: Map<K, V>, k: K): Map<K, V> => {
+  const m = new Map(old);
+  m.delete(k);
+  return m;
+};
+
+export const makeMapDeleter =
+  <K, V>(k: K) =>
+  (old: Map<K, V>) =>
+    deleteMapItem(old, k);
+
+export const clamp = (x: number, min: number, max: number) => {
+  if (x < min) {
+    return min;
+  }
+  if (x > max) {
+    return max;
+  }
+  return x;
+};

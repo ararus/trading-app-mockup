@@ -3,7 +3,12 @@
   overflow: hidden;
   margin: 0;
   padding: 0;
-  border-style: none;
+
+  border-style: solid;
+  border-top-color: var(--row-border-color);
+  border-right-color: var(--column-separator-color);
+  border-width: 1px 1px 0 0;
+
   white-space: nowrap;
   position: relative;
   font-size: var(--uitkTable-fontSize);
@@ -19,24 +24,6 @@
   background-color: var(--uitkTable-backgroundColor-secondary);
 }
 
-.uitkTableBaseCell-columnDivider {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 1px;
-  background-color: var(--uitkTable-columnDivider-color);
-}
-
-.uitkTableBaseCell-allEditable {
-  border-width: 0 0 1px 1px;
-}
-
-.uitkTableBaseCell-editable {
-  border-width: 0 1px 1px 2px;
-  border-color: #84878e;
-}
-
 .uitkTableBaseCell-valueContainer {
   position: absolute;
   top: 0;
@@ -47,4 +34,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: var(--uitkTable-rowHeight);
+}
+
+.uitkTableBaseCell-editable .uitkTableBaseCell-valueContainer {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--uitkTable-editableCell-borderColor);
 }

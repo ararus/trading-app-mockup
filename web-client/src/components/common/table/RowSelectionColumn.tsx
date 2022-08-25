@@ -11,6 +11,7 @@ export const RowSelectionColumn = (props: RowSelectionColumnProps) => {
       defaultWidth={100}
       headerComponent={RowSelCheckHeaderCell}
       cellValueComponent={RowSelectionCheckboxCellValue}
+      pinned="left"
     />
   );
 };

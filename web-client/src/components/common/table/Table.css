@@ -212,6 +212,7 @@
 
   --uitkTable-row-borderColor-selected: var(--uitk-color-blue-50);
   --uitkTable-cell-backgroundColor-selected: #64b1e4;
+  --uitkTable-editableCell-borderColor: var(--uitk-color-grey-900);
   /*--uitkTable-header-borderColor: var(--uitk-color-grey-90);*/
 
   --uitkTable-header-color: var(--uitk-color-grey-300);
@@ -241,6 +242,7 @@
 
   --uitkTable-row-borderColor-selected: #4b9fd8;
   --uitkTable-cell-backgroundColor-selected: #64b1e4;
+  --uitkTable-editableCell-borderColor: var(--uitk-color-grey-80);
   /*--uitkTable-header-borderColor: var(--uitk-color-grey-100);*/
 
   --uitkTable-header-color: var(--uitk-color-grey-50);
@@ -265,6 +267,11 @@
   /*width: 800px;*/
   position: relative;
   outline: none;
+  --column-separator-color: rgba(0, 0, 0, 0);
+}
+
+.uitkTable-columnSeparators {
+  --column-separator-color: var(--uitkTable-columnDivider-color);
 }
 
 .uitkTable table {

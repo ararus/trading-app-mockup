@@ -1,0 +1,14 @@
+.uitkTableCellEditor {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.uitkTableCellEditor input {
+  width: 100%;
+  height: var(--uitkTable-rowHeight);
+  box-sizing: border-box;
+  outline: none;
+  margin: 0;
+  border: dotted 2px var(--uitk-editable-borderColor-active);
+}

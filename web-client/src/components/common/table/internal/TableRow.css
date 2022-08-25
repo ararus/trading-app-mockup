@@ -4,7 +4,7 @@
   --row-border-color: var(--uitkTable-rowDivider-color);
 }
 
-.uitkTableTableRow td, .uitkTableTableRow th {
+.uitkTableTableRow th {
   border-style: solid;
   border-color: var(--row-border-color);
   border-width: 1px 0 0 0;
