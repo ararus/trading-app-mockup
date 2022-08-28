@@ -1,4 +1,3 @@
-import { FC } from "react";
 import cn from "classnames";
 import "./BaseCell.css";
 import { makePrefixer } from "@jpmorganchase/uitk-core";
@@ -8,11 +7,11 @@ import { Cursor } from "./internal";
 
 const withBaseName = makePrefixer("uitkTableBaseCell");
 
-export function getCellId(rowKey: string, column: TableColumnModel) {
+export function getCellId<T>(rowKey: string, column: TableColumnModel<T>) {
   return `R${rowKey}C${column.info.props.id}`;
 }
 
-export const BaseCell: FC<TableCellProps> = function BaseCell(props) {
+export function BaseCell<T>(props: TableCellProps<T>) {
   const { column, className, row, style, isFocused, children } = props;
   return (
     <td
@@ -34,4 +33,4 @@ export const BaseCell: FC<TableCellProps> = function BaseCell(props) {
       <div className={withBaseName("valueContainer")}>{children}</div>
     </td>
   );
-};
+}

@@ -11,7 +11,7 @@ const withBaseName = makePrefixer("uitkTableTopPart");
 export interface TopPartProps<T> {
   topRef: RefObject<HTMLDivElement>;
   onWheel: WheelEventHandler<HTMLDivElement>;
-  columns: TableColumnModel[];
+  columns: TableColumnModel<T>[];
   columnGroups: TableColumnGroupModel[];
   midGap: number;
 }

@@ -1,14 +1,11 @@
 import {
   ChangeEventHandler,
-  CSSProperties,
   FC,
   FocusEventHandler,
   KeyboardEventHandler,
-  ReactNode,
 } from "react";
 import "./CellEditor.css";
 import { makePrefixer } from "@jpmorganchase/uitk-core";
-import { TableColumnModel, TableRowModel } from "./Table";
 import { useEditorContext } from "./EditorContext";
 
 const withBaseName = makePrefixer("uitkTableCellEditor");

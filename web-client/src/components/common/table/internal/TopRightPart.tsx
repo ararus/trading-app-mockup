@@ -11,7 +11,7 @@ const withBaseName = makePrefixer("uitkTableTopRightPart");
 
 export interface TopRightPartProps<T> {
   onWheel: WheelEventHandler<HTMLTableElement>;
-  columns: TableColumnModel[];
+  columns: TableColumnModel<T>[];
   columnGroups: TableColumnGroupModel[];
   isRaised?: boolean;
 }

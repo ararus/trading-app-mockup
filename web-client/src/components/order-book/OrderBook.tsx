@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { FC, ReactNode, useMemo } from "react";
+import { CSSProperties, FC, ReactNode, useMemo } from "react";
 import {
   Card,
   FlexItem,
@@ -18,7 +18,16 @@ import {
   ArrowUpIcon,
   SwapIcon,
 } from "@jpmorganchase/uitk-icons";
-import { GridList, IGridListCellProps, IGridListColumn } from "../common";
+import {
+  GridList,
+  IGridListCellProps,
+  IGridListColumn,
+  Table,
+  TableCellProps,
+  TableCellValueProps,
+  TableColumn,
+  TableProps,
+} from "../common";
 import { useStore } from "../../store";
 import { IPriceLevel } from "../../dtos";
 
@@ -27,18 +36,6 @@ const withBaseName = makePrefixer("tamOrderBook");
 export interface IOrderBookProps {}
 
 const dropdownSource = ["0.00001", "0.000001", "0.0000001", "0.00000001"];
-
-function cell<T>(className: string, getter: (dataItem: T) => ReactNode) {
-  return (props: IGridListCellProps<T>) => {
-    const value = getter(props.dataItem);
-    return <div className={withBaseName(className)}>{value}</div>;
-  };
-}
-
-const SellPriceCell = cell<IPriceLevel>("sellPrice", (x) => x.price.toFixed(9));
-const BuyPriceCell = cell<IPriceLevel>("buyPrice", (x) => x.price.toFixed(9));
-const AmountCell = cell<IPriceLevel>("amount", (x) => x.amount.toFixed(2));
-const TotalCell = cell<IPriceLevel>("total", (x) => x.total.toFixed(7));
 
 export interface ILastPricePanelProps {
   lastPrice: number;
@@ -60,36 +57,27 @@ export const LastPricePanel: FC<ILastPricePanelProps> = (props) => {
   );
 };
 
+const MobxTable = observer((props: TableProps<IPriceLevel>) => {
+  const { rowData, ...rest } = props;
+  return <Table rowData={[...rowData]} {...rest} />;
+});
+
+function TotalCellValue(props: TableCellValueProps<IPriceLevel>) {
+  const value = props.row.data.total;
+  const style: CSSProperties = {
+    width: `${Math.round(value * 100)}px`,
+  };
+  return (
+    <div className={withBaseName("total")}>
+      <div className={withBaseName("totalBar")} style={style} />
+      <div className={withBaseName("totalValue")}>{value}</div>
+    </div>
+  );
+}
+
 export const OrderBook: FC<IOrderBookProps> = observer((props) => {
   const { orderBook, tokenSelector } = useStore();
   const { selectedTokenPair } = tokenSelector;
-
-  const [sellColumns, buyColumns] = useMemo(() => {
-    const sellColumns: IGridListColumn<IPriceLevel>[] = [
-      {
-        header: `Price ${selectedTokenPair?.baseToken}`,
-        cellComponent: SellPriceCell,
-        width: "130px",
-      },
-      {
-        header: `Amount ${selectedTokenPair?.quoteToken}`,
-        cellComponent: AmountCell,
-        width: "auto",
-      },
-      {
-        header: `Total ${selectedTokenPair?.baseToken}`,
-        cellComponent: TotalCell,
-        width: "auto",
-        textAlign: "right",
-      },
-    ];
-
-    const buyColumns: IGridListColumn<IPriceLevel>[] = [
-      { ...sellColumns[0], cellComponent: BuyPriceCell },
-      ...sellColumns.slice(1),
-    ];
-    return [sellColumns, buyColumns];
-  }, [selectedTokenPair]);
 
   return (
     <Card className={withBaseName()}>
@@ -126,11 +114,31 @@ export const OrderBook: FC<IOrderBookProps> = observer((props) => {
           </FlexLayout>
         </FlexItem>
         <FlexItem grow={1} className={withBaseName("sellLayout")}>
-          <GridList
-            data={orderBook.sellLevels}
-            columns={sellColumns}
-            className={withBaseName("sellGridList")}
-          />
+          <MobxTable
+            className={withBaseName("sellTable")}
+            rowData={orderBook.sellLevels}
+            zebra={true}
+          >
+            <TableColumn
+              id={"price"}
+              name={`Price ${selectedTokenPair?.baseToken || ""}`}
+              align={"right"}
+              getValue={(x: IPriceLevel) => x.price.toFixed(9)}
+            />
+            <TableColumn
+              id={"amount"}
+              name={`Amount ${selectedTokenPair?.quoteToken || ""}`}
+              align={"right"}
+              getValue={(x: IPriceLevel) => x.amount.toFixed(2)}
+            />
+            <TableColumn
+              id={"total"}
+              name={`Total ${selectedTokenPair?.baseToken || ""}`}
+              align={"right"}
+              cellValueComponent={TotalCellValue}
+              getValue={(x: IPriceLevel) => x.total.toFixed(7)}
+            />
+          </MobxTable>
         </FlexItem>
         <FlexItem>
           <LastPricePanel
@@ -140,12 +148,32 @@ export const OrderBook: FC<IOrderBookProps> = observer((props) => {
           />
         </FlexItem>
         <FlexItem grow={1} className={withBaseName("buyLayout")}>
-          <GridList
-            data={orderBook.buyLevels}
-            columns={buyColumns}
-            showHeader={false}
-            className={withBaseName("buyGridList")}
-          />
+          <MobxTable
+            className={withBaseName("buyTable")}
+            rowData={orderBook.buyLevels}
+            zebra={true}
+            hideHeader={true}
+          >
+            <TableColumn
+              id={"price"}
+              name={`Price ${selectedTokenPair?.baseToken || ""}`}
+              align={"right"}
+              getValue={(x: IPriceLevel) => x.price.toFixed(9)}
+            />
+            <TableColumn
+              id={"amount"}
+              name={`Amount ${selectedTokenPair?.quoteToken || ""}`}
+              align={"right"}
+              getValue={(x: IPriceLevel) => x.amount.toFixed(2)}
+            />
+            <TableColumn
+              id={"total"}
+              name={`Total ${selectedTokenPair?.baseToken || ""}`}
+              align={"right"}
+              cellValueComponent={TotalCellValue}
+              getValue={(x: IPriceLevel) => x.total.toFixed(7)}
+            />
+          </MobxTable>
         </FlexItem>
       </FlexLayout>
     </Card>

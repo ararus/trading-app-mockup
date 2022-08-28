@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { TableColumnModel } from "../Table";
 
-export interface TableColGroupProps {
-  columns: TableColumnModel[];
+export interface TableColGroupProps<T> {
+  columns: TableColumnModel<T>[];
   gap?: number;
 }
 
@@ -10,7 +10,7 @@ export interface TableColProps<T> {
   width: number;
 }
 
-export function TableColGroup(props: TableColGroupProps) {
+export function TableColGroup<T>(props: TableColGroupProps<T>) {
   const { columns, gap } = props;
   return (
     <colgroup>

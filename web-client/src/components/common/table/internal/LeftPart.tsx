@@ -8,18 +8,18 @@ import { TableColumnModel, TableRowModel } from "../Table";
 
 const withBaseName = makePrefixer("uitkTableLeftPart");
 
-export interface LeftPartProps {
+export interface LeftPartProps<T> {
   leftRef: RefObject<HTMLDivElement>;
   onWheel: WheelEventHandler<HTMLTableElement>;
   isRaised?: boolean;
-  columns: TableColumnModel[];
-  rows: TableRowModel[];
+  columns: TableColumnModel<T>[];
+  rows: TableRowModel<T>[];
   hoverOverRowKey?: string;
   setHoverOverRowKey: (key: string | undefined) => void;
   zebra?: boolean;
 }
 
-export function LeftPart(props: LeftPartProps) {
+export function LeftPart<T>(props: LeftPartProps<T>) {
   const {
     leftRef,
     onWheel,

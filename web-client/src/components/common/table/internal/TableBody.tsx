@@ -4,21 +4,22 @@ import { TableColumnModel, TableRowModel } from "../Table";
 import { getCellPosition, getRowKeyAttribute } from "./utils";
 import { useSelectionContext } from "../SelectionContext";
 import { useEditorContext } from "../EditorContext";
+import { useCursorContext } from "../CursorContext";
 
-export interface TableBodyProps {
-  columns: TableColumnModel[];
-  rows: TableRowModel[];
+export interface TableBodyProps<T> {
+  columns: TableColumnModel<T>[];
+  rows: TableRowModel<T>[];
   hoverRowKey?: string;
   setHoverRowKey: (key: string | undefined) => void;
   gap?: number;
   zebra?: boolean;
 }
 
-export function TableBody(props: TableBodyProps) {
+export function TableBody<T>(props: TableBodyProps<T>) {
   const { columns, rows, hoverRowKey, setHoverRowKey, gap, zebra } = props;
 
-  const { selRowKeys, selectRows, cursorRowKey, cursorColKey, moveCursor } =
-    useSelectionContext();
+  const { selRowKeys, selectRows } = useSelectionContext();
+  const { cursorRowKey, cursorColKey, moveCursor } = useCursorContext();
 
   const { editMode, startEditMode } = useEditorContext();
 

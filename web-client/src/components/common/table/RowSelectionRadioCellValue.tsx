@@ -1,27 +1,25 @@
-import { CheckboxIcon, makePrefixer } from "@jpmorganchase/uitk-core";
+import { makePrefixer, RadioIcon } from "@jpmorganchase/uitk-core";
 import { TableCellValueProps } from "./TableColumn";
 import { useSelectionContext } from "./SelectionContext";
 import { MouseEventHandler } from "react";
-import "./RowSelectionCheckboxCellValue.css";
+import "./RowSelectionRadioCellValue.css";
 
 const withBaseName = makePrefixer("uitkTableRowSelectionCheckboxCellValue");
 
-export function RowSelectionCheckboxCellValue<T>(
-  props: TableCellValueProps<T>
-) {
+export function RowSelectionRadioCellValue<T>(props: TableCellValueProps<T>) {
   const { row } = props;
   const { selRowKeys, selectRows } = useSelectionContext();
 
   const isSelected = selRowKeys.has(row.key);
   const onMouseDown: MouseEventHandler<HTMLDivElement> = (event) => {
-    selectRows(row.index, false, true);
+    selectRows(row.index, false, false);
     event.preventDefault();
     event.stopPropagation();
   };
 
   return (
     <div className={withBaseName()} onMouseDown={onMouseDown}>
-      <CheckboxIcon checked={isSelected} className={withBaseName("icon")} />
+      <RadioIcon checked={isSelected} />
     </div>
   );
 }

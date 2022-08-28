@@ -23,7 +23,7 @@ export interface ColumnGroupProps {
   headerValueComponent?: ComponentType<ColumnGroupCellProps>;
 }
 
-export const ColumnGroup = (props: ColumnGroupProps) => {
+export function ColumnGroup(props: ColumnGroupProps) {
   const pinned = props.pinned || null;
   const table = useTableContext();
   useEffect(() => {
@@ -39,4 +39,4 @@ export const ColumnGroup = (props: ColumnGroupProps) => {
     return child;
   });
   return <>{childrenWithPinnedOverridden}</>;
-};
+}

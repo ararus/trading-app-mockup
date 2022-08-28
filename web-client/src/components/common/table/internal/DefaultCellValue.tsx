@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { ReactNode } from "react";
 import { TableCellValueProps } from "../TableColumn";
 import { makePrefixer } from "@jpmorganchase/uitk-core";
 import cn from "classnames";
@@ -6,7 +6,7 @@ import "./DefaultCellValue.css";
 
 const withBaseName = makePrefixer("uitkTableDefaultCellValue");
 
-export const DefaultCellValue: FC<TableCellValueProps> = (props) => {
+export function DefaultCellValue<T>(props: TableCellValueProps<T>) {
   const { value } = props;
   return (
     <div
@@ -14,7 +14,7 @@ export const DefaultCellValue: FC<TableCellValueProps> = (props) => {
         [withBaseName("alignRight")]: props.column.info.props.align === "right",
       })}
     >
-      {value}
+      {value as ReactNode}
     </div>
   );
-};
+}

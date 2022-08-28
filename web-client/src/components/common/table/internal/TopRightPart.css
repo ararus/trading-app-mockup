@@ -1,7 +1,7 @@
 .uitkTableTopRightPart {
   position: absolute;
   top: 0;
-  right: var(--uitkTable-scrollBar-size);
+  right: var(--uitkTable-scrollBarWidth);
   z-index: 2;
 }
 

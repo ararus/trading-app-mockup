@@ -16,16 +16,22 @@
 }
 
 .tamTokenSelector-gridList {
-  max-height: 600px;
+  max-height: 300px;
+}
+
+.tamTokenSelector-table {
+  height: 300px;
 }
 
 .tamTokenSelector-favoriteIcon {
 }
 
 .tamTokenSelector-tokenPair {
+
 }
 
 .tamTokenSelector-lastPriceCell {
+  padding: var(--uitkTable-cell-padding);
 }
 
 .tamTokenSelector-lastPrice {
@@ -34,6 +40,7 @@
 
 .tamTokenSelector-change {
   text-align: right;
+  padding: var(--uitkTable-cell-padding);
 }
 
 .tamTokenSelector-positiveChange {

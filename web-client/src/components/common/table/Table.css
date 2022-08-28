@@ -194,7 +194,6 @@
 }
 
 .uitkTable {
-  --uitkTable-scrollBar-size: 15px;
   --uitkTable-cell-padding: 0 var(--uitkTable-padding) 0 var(--uitkTable-padding);
   --uitkTable-borderSpacing: 1px;
 

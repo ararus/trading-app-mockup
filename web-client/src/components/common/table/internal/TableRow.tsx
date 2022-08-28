@@ -10,12 +10,12 @@ import { CellEditor } from "../CellEditor";
 
 const withBaseName = makePrefixer("uitkTableTableRow");
 
-export interface TableRowProps {
-  row: TableRowModel;
+export interface TableRowProps<T> {
+  row: TableRowModel<T>;
   isSelected?: boolean;
   isHoverOver?: boolean;
   zebra?: boolean;
-  columns: TableColumnModel[];
+  columns: TableColumnModel<T>[];
   cursorColKey?: string;
   onMouseEnter?: MouseEventHandler<HTMLTableRowElement>;
   onMouseLeave?: MouseEventHandler<HTMLTableRowElement>;
@@ -23,7 +23,7 @@ export interface TableRowProps {
   editorColKey?: string;
 }
 
-export const TableRow = function TableRow(props: TableRowProps) {
+export function TableRow<T>(props: TableRowProps<T>) {
   const {
     row,
     isSelected,
@@ -77,4 +77,4 @@ export const TableRow = function TableRow(props: TableRowProps) {
       {gap !== undefined && gap > 0 ? <FakeCell row={row} /> : null}
     </tr>
   );
-};
+}

@@ -1,6 +1,7 @@
 .uitkTableDefaultCellValue {
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: var(--uitkTable-cell-padding);
 }
 
 .uitkTableDefaultCellValue-alignRight {

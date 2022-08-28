@@ -10,8 +10,8 @@ const withBaseName = makePrefixer("uitkTableMiddlePart");
 export interface MiddlePartProps<T> {
   middleRef: RefObject<HTMLDivElement>;
   onWheel: WheelEventHandler<HTMLTableElement>;
-  columns: TableColumnModel[];
-  rows: TableRowModel[];
+  columns: TableColumnModel<T>[];
+  rows: TableRowModel<T>[];
   hoverOverRowKey?: string;
   setHoverOverRowKey: (key: string | undefined) => void;
   midGap: number;

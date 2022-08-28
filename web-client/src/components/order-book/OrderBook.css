@@ -17,12 +17,16 @@
   /*height: 400px;*/
 }
 
-.tamOrderBook-sellGridList {
-  max-height: 200px;
+.tamOrderBook-sellTable {
+  height: 200px;
+  width: 320px;
+  --bar-background: var(--tam-negative-background);
 }
 
-.tamOrderBook-buyGridList {
-  max-height: 200px;
+.tamOrderBook-buyTable {
+  height: 200px;
+  width: 320px;
+  --bar-background: var(--tam-positive-background);
 }
 
 .tamOrderBook-title {
@@ -42,7 +46,28 @@
 }
 
 .tamOrderBook-total {
+  /*background-color: #7dc3f2;*/
+}
+
+.tamOrderBook-totalBar {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background-color: var(--bar-background);
+}
+
+.tamOrderBook-totalValue {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   text-align: right;
+  padding: var(--uitkTable-cell-padding);
 }
 
 .tamOrderBook-lastPricePanel {

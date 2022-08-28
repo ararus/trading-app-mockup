@@ -2,7 +2,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  bottom: var(--uitkTable-scrollBar-size);
+  bottom: var(--uitkTable-scrollBarHeight);
   overflow-x: hidden;
   overflow-y: hidden;
   z-index: 2;

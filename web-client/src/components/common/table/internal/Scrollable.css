@@ -1,6 +1,6 @@
 .uitkTableScrollable {
-  overflow-y: scroll;
-  overflow-x: scroll;
+  overflow-y: auto;
+  overflow-x: auto;
   position: absolute;
   top: 0;
   right: 0;

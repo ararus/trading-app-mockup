@@ -8,7 +8,7 @@ import { FakeHeaderCell } from "./FakeHeaderCell";
 const withBaseName = makePrefixer("uitkTableHeaderRow");
 
 export interface HeaderRowProps<T> {
-  columns: TableColumnModel[];
+  columns: TableColumnModel<T>[];
   gap?: number;
 }
 

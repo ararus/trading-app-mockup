@@ -5,6 +5,13 @@ import { makePrefixer } from "@jpmorganchase/uitk-core";
 const withBaseName = makePrefixer("uitkTableScrollable");
 
 export interface ScrollableProps<T> {
+  resizeClient: (
+    clientWidth: number,
+    clientHeight: number,
+    scrollBarWidth: number,
+    scrollBarHeight: number
+  ) => void;
+
   scrollLeft: number;
   scrollTop: number;
   scrollSource: "user" | "table";
@@ -19,8 +26,15 @@ export interface ScrollableProps<T> {
 }
 
 export function Scrollable<T>(props: ScrollableProps<T>) {
-  const { scrollerRef, middleRef, topRef, leftRef, rightRef, bottomRef } =
-    props;
+  const {
+    scrollerRef,
+    middleRef,
+    topRef,
+    leftRef,
+    rightRef,
+    bottomRef,
+    resizeClient,
+  } = props;
 
   const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
     if (!scrollerRef.current) {
@@ -52,6 +66,24 @@ export function Scrollable<T>(props: ScrollableProps<T>) {
     // console.log(`Scrollable.onScroll setting scroll top to ${scrollTop}`);
     props.scroll(scrollLeft, scrollTop, "user");
   };
+
+  useEffect(() => {
+    if (!scrollerRef.current) {
+      return;
+    }
+    const { offsetWidth, offsetHeight, clientWidth, clientHeight } =
+      scrollerRef.current;
+    const scrollBarWidth = offsetWidth - clientWidth;
+    const scrollBarHeight = offsetHeight - clientHeight;
+    resizeClient(clientWidth, clientHeight, scrollBarWidth, scrollBarHeight);
+    // console.log(
+    //   `offsetWidth: ${offsetWidth}; clientWidth: ${clientWidth}; scrollBarWidth: ${scrollBarWidth}`
+    // );
+
+    // console.log(
+    //   `offsetHeight: ${offsetHeight}; clientHeight: ${clientHeight}; scrollBarHeight: ${scrollBarHeight}`
+    // );
+  });
 
   useEffect(() => {
     if (!scrollerRef.current) {

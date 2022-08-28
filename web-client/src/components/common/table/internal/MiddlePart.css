@@ -3,8 +3,8 @@
   overflow-x: hidden;
   position: absolute;
   top: 0;
-  right: var(--uitkTable-scrollBar-size);
-  bottom: var(--uitkTable-scrollBar-size);
+  right: var(--uitkTable-scrollBarWidth);
+  bottom: var(--uitkTable-scrollBarHeight);
   left: 0;
   clip-path: inset(var(--uitkTable-topHeight) var(--uitkTable-rightWidth) 0 var(--uitkTable-leftWidth));
 }

@@ -1,15 +1,15 @@
 import React, {
   KeyboardEventHandler,
+  ReactElement,
   ReactNode,
   useCallback,
-  useEffect,
   useMemo,
   useRef,
   useState,
   WheelEventHandler,
 } from "react";
 import { makePrefixer } from "@jpmorganchase/uitk-core";
-import { TableColumnInfo } from "./TableColumn";
+import { TableColumnInfo, TableColumnProps } from "./TableColumn";
 import { TableContext } from "./TableContext";
 import cx from "classnames";
 import {
@@ -35,8 +35,8 @@ import {
   useProd,
   useRowIdxByKey,
   useRowModels,
+  useRowSelection,
   useScrollToCell,
-  useSelectRows,
   useSum,
   useSumRangeWidth,
   useSumWidth,
@@ -45,39 +45,47 @@ import {
 } from "./internal";
 import "./Table.css";
 import { SelectionContext } from "./SelectionContext";
-import { ColumnGroupProps } from "./ColumnGroup";
 import { SizingContext } from "./SizingContext";
 import { LayoutContext } from "./LayoutContext";
 import { EditorContext } from "./EditorContext"; // TODO remove
+import { CursorContext } from "./CursorContext";
+import { TableColumn } from "./TableColumn";
+import { ColumnGroup, ColumnGroupProps } from "./ColumnGroup";
 
 const withBaseName = makePrefixer("uitkTable");
 
 export type ColumnSeparatorType = "regular" | "none" | "groupEdge";
 export type ColumnGroupRowSeparatorType = "first" | "regular" | "last";
 export type ColumnGroupColumnSeparatorType = "regular" | "none";
+export type TableRowSelectionMode = "single" | "multi" | "none";
 
-export interface TableProps {
-  children: ReactNode;
+export type RowKeyGetter<T> = (row: T, index: number) => string;
+
+export interface TableProps<T> {
+  children: ReactNode; //ReactElement<TableColumnProps<T> | ColumnGroupProps>[];
   zebra?: boolean;
+  hideHeader?: boolean;
   columnSeparators?: boolean;
-  rowData: any[];
-  rowKeyGetter: (row: any) => string;
+  rowData: T[];
+  rowKeyGetter?: RowKeyGetter<T>;
   defaultSelectedRowKeys?: Set<string>;
   className?: string;
   variant?: "primary" | "secondary";
+  rowSelectionMode?: TableRowSelectionMode;
+  onRowSelected?: (selectedRows: T[]) => void;
 }
 
-export interface TableRowModel {
+export interface TableRowModel<T> {
   key: string;
   index: number;
-  data: any;
+  data: T;
 }
 
-export interface TableColumnModel {
+export interface TableColumnModel<T> {
   index: number;
   separator: ColumnSeparatorType;
 
-  info: TableColumnInfo;
+  info: TableColumnInfo<T>;
 }
 
 export interface TableColumnGroupModel {
@@ -89,16 +97,23 @@ export interface TableColumnGroupModel {
   colSpan: number;
 }
 
-export const Table = (props: TableProps) => {
+function defaultRowKeyGetter<T>(row: T, index: number): string {
+  return `${index}`;
+}
+
+export const Table = function <T>(props: TableProps<T>) {
   const {
     rowData,
     zebra,
+    hideHeader,
     columnSeparators,
     className,
-    rowKeyGetter,
+    rowKeyGetter = defaultRowKeyGetter,
     children,
     defaultSelectedRowKeys,
     variant = "primary",
+    rowSelectionMode = "multi",
+    onRowSelected,
   } = props;
 
   // if (rowData.length > 0) {
@@ -121,12 +136,17 @@ export const Table = (props: TableProps) => {
 
   const [clientWidth, setClientWidth] = useState(0);
   const [clientHeight, setClientHeight] = useState(0);
+  const [scrollBarHeight, setScrollBarHeight] = useState(0);
+  const [scrollBarWidth, setScrollBarWidth] = useState(0);
 
-  const [selRowKeys, setSelRowKeys] = useState<Set<string>>(
-    defaultSelectedRowKeys || new Set()
-  );
-  const [lastSelRowKey, setLastSelRowKey] = useState<string | undefined>(
-    undefined
+  const resizeClient = useCallback(
+    (clW: number, clH: number, sbW: number, sbH: number) => {
+      setClientHeight(clH);
+      setClientWidth(clW);
+      setScrollBarHeight(sbH);
+      setScrollBarWidth(sbW);
+    },
+    [setClientHeight, setClientWidth, setScrollBarHeight, setScrollBarWidth]
   );
 
   const [rowHeight, setRowHeight] = useState<number>(0);
@@ -155,8 +175,10 @@ export const Table = (props: TableProps) => {
 
   const midColsById = useMemo(
     () =>
-      new Map<string, TableColumnModel>(
-        midCols.map((c) => [c.info.props.id, c])
+      new Map<string, TableColumnModel<T>>(
+        midCols.map(
+          (c) => [c.info.props.id, c] as [string, TableColumnModel<T>]
+        )
       ),
     [midCols]
   );
@@ -169,7 +191,7 @@ export const Table = (props: TableProps) => {
   const hasColumnGroups =
     leftGroups.length > 0 || midGroups.length > 0 || rightGroups.length > 0;
 
-  const headRowCount = hasColumnGroups ? 2 : 1; // TODO multiple group levels
+  const headRowCount = hideHeader ? 0 : hasColumnGroups ? 2 : 1; // TODO multiple group levels
   const rowCount = rowData.length;
   // console.log(`RowCount: ${rowCount}`);
   const botRowCount = 0; // TODO
@@ -253,6 +275,8 @@ export const Table = (props: TableProps) => {
         ["--uitkTable-bottomHeight"]: `${botHeight}px`,
         ["--uitkTable-headerVisibleColumnWidth"]: `${headVisColWh}px`,
         ["--uitkTable-headerVisibleAreaLeft"]: `${headVisAreaLeft}px`,
+        ["--uitkTable-scrollBarHeight"]: `${scrollBarHeight}px`,
+        ["--uitkTable-scrollBarWidth"]: `${scrollBarWidth}px`,
       } as any),
     [
       totalHeight,
@@ -266,20 +290,10 @@ export const Table = (props: TableProps) => {
       bodyVisAreaTop,
       headVisColWh,
       headVisAreaLeft,
+      scrollBarHeight,
+      scrollBarWidth,
     ]
   );
-
-  useEffect(() => {
-    if (rootRef.current) {
-      const rect = rootRef.current.getBoundingClientRect();
-      if (rect.height !== clientHeight) {
-        setClientHeight(rect.height);
-      }
-      if (rect.width !== clientWidth) {
-        setClientWidth(rect.width);
-      }
-    }
-  });
 
   const onWheel: WheelEventHandler<HTMLTableElement> = useCallback(
     ({ deltaX, deltaY }) => {
@@ -386,7 +400,7 @@ export const Table = (props: TableProps) => {
       }
       rowIdx = clamp(rowIdx, 0, rowData.length - 1);
       colIdx = clamp(colIdx, 0, cols.length - 1);
-      setCursorRowKey(rowKeyGetter(rowData[rowIdx]));
+      setCursorRowKey(rowKeyGetter(rowData[rowIdx], rowIdx));
       setCursorColKey(cols[colIdx].info.props.id);
       scrollToCell(rowIdx, colIdx);
       rootRef.current?.focus();
@@ -453,51 +467,6 @@ export const Table = (props: TableProps) => {
   const isLeftRaised = scrollLeft > 0;
   const isRightRaised = scrollLeft + clientMidWidth < midWidth;
 
-  const selectRows = useSelectRows(
-    lastSelRowKey,
-    setSelRowKeys,
-    setLastSelRowKey,
-    rowData,
-    rowIdxByKey,
-    rowKeyGetter
-  );
-
-  const isAllSelected = selRowKeys.size === rowData.length;
-  const isAnySelected = selRowKeys.size > 0;
-
-  const selectAll = useCallback(() => {
-    setSelRowKeys(new Set(rowData.map((d) => rowKeyGetter(d))));
-  }, [rowData, setSelRowKeys]);
-
-  const unselectAll = useCallback(() => {
-    setSelRowKeys(new Set());
-  }, [setSelRowKeys]);
-
-  const selectionContext: SelectionContext = useMemo(
-    () => ({
-      selRowKeys,
-      isAllSelected,
-      isAnySelected,
-      selectRows,
-      selectAll,
-      unselectAll,
-      cursorRowKey,
-      cursorColKey,
-      moveCursor,
-    }),
-    [
-      selRowKeys,
-      selectRows,
-      cursorRowKey,
-      cursorColKey,
-      moveCursor,
-      isAllSelected,
-      isAnySelected,
-      selectAll,
-      unselectAll,
-    ]
-  );
-
   const resizeColumn = useCallback(
     (colIdx: number, width: number) => {
       const col = cols[colIdx];
@@ -546,6 +515,24 @@ export const Table = (props: TableProps) => {
     ]
   );
 
+  const selectionContext = useRowSelection(
+    rowKeyGetter,
+    rowData,
+    rowIdxByKey,
+    defaultSelectedRowKeys,
+    rowSelectionMode,
+    onRowSelected
+  );
+
+  const cursorContext: CursorContext = useMemo(
+    () => ({
+      cursorRowKey,
+      cursorColKey,
+      moveCursor,
+    }),
+    [cursorRowKey, cursorColKey, moveCursor]
+  );
+
   // console.log(
   //   cols.map((c) => `"${c.info.props.name}": ${c.info.width}`).join("\n")
   // );
@@ -554,92 +541,102 @@ export const Table = (props: TableProps) => {
     <TableContext.Provider value={contextValue}>
       <LayoutContext.Provider value={layoutContext}>
         <SelectionContext.Provider value={selectionContext}>
-          <SizingContext.Provider value={sizingContext}>
-            <EditorContext.Provider value={editorContext}>
-              {props.children}
-              <div
-                className={cx(
-                  withBaseName(),
-                  {
-                    [withBaseName("zebra")]: zebra,
-                    [withBaseName("columnSeparators")]: columnSeparators,
-                    [withBaseName("primaryBackground")]: variant === "primary",
-                    [withBaseName("secondaryBackground")]:
-                      variant === "secondary",
-                  },
-                  className
-                )}
-                style={style}
-                ref={rootRef}
-                tabIndex={0}
-                onKeyDown={onKeyDown}
-                data-name={"grid-root"}
-              >
-                <CellMeasure setRowHeight={setRowHeight} />
-                <Scrollable
-                  scrollLeft={scrollLeft}
-                  scrollTop={scrollTop}
-                  scrollSource={scrollSource}
-                  scroll={scroll}
-                  scrollerRef={scrollableRef}
-                  topRef={topRef}
-                  rightRef={rightRef}
-                  bottomRef={bottomRef}
-                  leftRef={leftRef}
-                  middleRef={middleRef}
-                />
-                <MiddlePart
-                  middleRef={middleRef}
-                  onWheel={onWheel}
-                  columns={bodyVisibleColumns}
-                  rows={rows}
-                  hoverOverRowKey={hoverRowKey}
-                  setHoverOverRowKey={setHoverRowKey}
-                  midGap={midGap}
-                  zebra={zebra}
-                />
-                <TopPart
-                  columns={headVisibleColumns}
-                  columnGroups={visColGrps}
-                  topRef={topRef}
-                  onWheel={onWheel}
-                  midGap={midGap}
-                />
-                <LeftPart
-                  leftRef={leftRef}
-                  onWheel={onWheel}
-                  columns={leftCols}
-                  rows={rows}
-                  isRaised={isLeftRaised}
-                  hoverOverRowKey={hoverRowKey}
-                  setHoverOverRowKey={setHoverRowKey}
-                  zebra={zebra}
-                />
-                <RightPart
-                  rightRef={rightRef}
-                  onWheel={onWheel}
-                  columns={rightCols}
-                  rows={rows}
-                  isRaised={isRightRaised}
-                  hoverOverRowKey={hoverRowKey}
-                  setHoverOverRowKey={setHoverRowKey}
-                  zebra={zebra}
-                />
-                <TopLeftPart
-                  onWheel={onWheel}
-                  columns={leftCols}
-                  columnGroups={leftGroups}
-                  isRaised={isLeftRaised}
-                />
-                <TopRightPart
-                  onWheel={onWheel}
-                  columns={rightCols}
-                  columnGroups={rightGroups}
-                  isRaised={isRightRaised}
-                />
-              </div>
-            </EditorContext.Provider>
-          </SizingContext.Provider>
+          <CursorContext.Provider value={cursorContext}>
+            <SizingContext.Provider value={sizingContext}>
+              <EditorContext.Provider value={editorContext}>
+                {props.children}
+                <div
+                  className={cx(
+                    withBaseName(),
+                    {
+                      [withBaseName("zebra")]: zebra,
+                      [withBaseName("columnSeparators")]: columnSeparators,
+                      [withBaseName("primaryBackground")]:
+                        variant === "primary",
+                      [withBaseName("secondaryBackground")]:
+                        variant === "secondary",
+                    },
+                    className
+                  )}
+                  style={style}
+                  ref={rootRef}
+                  tabIndex={0}
+                  onKeyDown={onKeyDown}
+                  data-name={"grid-root"}
+                >
+                  <CellMeasure setRowHeight={setRowHeight} />
+                  <Scrollable
+                    resizeClient={resizeClient}
+                    scrollLeft={scrollLeft}
+                    scrollTop={scrollTop}
+                    scrollSource={scrollSource}
+                    scroll={scroll}
+                    scrollerRef={scrollableRef}
+                    topRef={topRef}
+                    rightRef={rightRef}
+                    bottomRef={bottomRef}
+                    leftRef={leftRef}
+                    middleRef={middleRef}
+                  />
+                  <MiddlePart
+                    middleRef={middleRef}
+                    onWheel={onWheel}
+                    columns={bodyVisibleColumns}
+                    rows={rows}
+                    hoverOverRowKey={hoverRowKey}
+                    setHoverOverRowKey={setHoverRowKey}
+                    midGap={midGap}
+                    zebra={zebra}
+                  />
+                  {!hideHeader && (
+                    <TopPart
+                      columns={headVisibleColumns}
+                      columnGroups={visColGrps}
+                      topRef={topRef}
+                      onWheel={onWheel}
+                      midGap={midGap}
+                    />
+                  )}
+                  <LeftPart
+                    leftRef={leftRef}
+                    onWheel={onWheel}
+                    columns={leftCols}
+                    rows={rows}
+                    isRaised={isLeftRaised}
+                    hoverOverRowKey={hoverRowKey}
+                    setHoverOverRowKey={setHoverRowKey}
+                    zebra={zebra}
+                  />
+                  <RightPart
+                    rightRef={rightRef}
+                    onWheel={onWheel}
+                    columns={rightCols}
+                    rows={rows}
+                    isRaised={isRightRaised}
+                    hoverOverRowKey={hoverRowKey}
+                    setHoverOverRowKey={setHoverRowKey}
+                    zebra={zebra}
+                  />
+                  {!hideHeader && (
+                    <TopLeftPart
+                      onWheel={onWheel}
+                      columns={leftCols}
+                      columnGroups={leftGroups}
+                      isRaised={isLeftRaised}
+                    />
+                  )}
+                  {!hideHeader && (
+                    <TopRightPart
+                      onWheel={onWheel}
+                      columns={rightCols}
+                      columnGroups={rightGroups}
+                      isRaised={isRightRaised}
+                    />
+                  )}
+                </div>
+              </EditorContext.Provider>
+            </SizingContext.Provider>
+          </CursorContext.Provider>
         </SelectionContext.Provider>
       </LayoutContext.Provider>
     </TableContext.Provider>

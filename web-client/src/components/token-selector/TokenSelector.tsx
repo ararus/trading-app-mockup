@@ -19,7 +19,6 @@ import {
   Portal,
   StaticInputAdornment,
   useFloatingUI,
-  useWindow,
 } from "@jpmorganchase/uitk-core";
 import { ToggleButton, ToggleButtonGroup } from "@jpmorganchase/uitk-lab";
 import {
@@ -29,7 +28,7 @@ import {
   FavoriteSolidIcon,
   SearchIcon,
 } from "@jpmorganchase/uitk-icons";
-import { GridList, IGridListCellProps, IGridListColumn } from "../common";
+import { Table, TableCellValueProps, TableColumn } from "../common";
 import cn from "classnames";
 import {
   ITokenSelectorContext,
@@ -43,57 +42,51 @@ const withBaseName = makePrefixer("tamTokenSelector");
 
 export interface ITokenSelectorProps {}
 
-export interface ICellProps {
-  className: string;
-  children: ReactNode;
-}
+const TokenPairCellValue = observer(function TokenPairCellValue(
+  props: TableCellValueProps<TokenPairInfo>
+) {
+  const { row } = props;
+  const { tokenPair, isFavorite } = row.data;
+  const { toggleFavorite } = useTokenSelectorContext();
+  const Icon = isFavorite ? FavoriteSolidIcon : FavoriteIcon;
 
-const TokenPairCell: FC<IGridListCellProps<TokenPairInfo>> = observer(
-  (props) => {
-    const { tokenPair, isFavorite } = props.dataItem;
-    const { toggleFavorite } = useTokenSelectorContext();
+  const onToggleFavorite: MouseEventHandler<HTMLButtonElement> = (event) => {
+    toggleFavorite(tokenPair);
+    row.data.setFavorite(!row.data.isFavorite);
+    event.preventDefault();
+    event.stopPropagation();
+  };
 
-    const Icon = isFavorite ? FavoriteSolidIcon : FavoriteIcon;
+  return (
+    <div className={withBaseName("tokenPair")}>
+      <FlexLayout align={"center"} gap={1}>
+        <Button variant={"secondary"} onMouseDown={onToggleFavorite}>
+          <Icon className={withBaseName("favoriteIcon")} />
+        </Button>
+        {tokenPair.name}
+      </FlexLayout>
+    </div>
+  );
+});
 
-    // TODO decide how to toggle favourite flag
-    const onToggleFavorite: MouseEventHandler<HTMLButtonElement> = (event) => {
-      toggleFavorite(props.dataItem.tokenPair);
-      props.dataItem.setFavorite(!props.dataItem.isFavorite);
-      event.preventDefault();
-      event.stopPropagation();
-    };
+const LastPriceCellValue = observer(function LastPriceCellValue(
+  props: TableCellValueProps<TokenPairInfo>
+) {
+  const { lastPrice, lastPriceUsd } = props.row.data;
+  return (
+    <div className={withBaseName("lastPriceCell")}>
+      <span className={withBaseName("lastPrice")}>{lastPrice.toFixed(3)}</span>
+      <span className={withBaseName("lastPriceUsd")}>
+        {` / $${lastPriceUsd.toFixed(2)}`}
+      </span>
+    </div>
+  );
+});
 
-    return (
-      <div className={withBaseName("tokenPair")}>
-        <FlexLayout align={"center"} gap={1}>
-          <Button variant={"secondary"} onClick={onToggleFavorite}>
-            <Icon className={withBaseName("favoriteIcon")} />
-          </Button>
-          {tokenPair.name}
-        </FlexLayout>
-      </div>
-    );
-  }
-);
-
-const LastPriceCell: FC<IGridListCellProps<TokenPairInfo>> = observer(
-  (props) => {
-    const { lastPrice, lastPriceUsd } = props.dataItem;
-    return (
-      <div className={withBaseName("lastPriceCell")}>
-        <span className={withBaseName("lastPrice")}>
-          {lastPrice.toFixed(3)}
-        </span>
-        <span className={withBaseName("lastPriceUsd")}>
-          {` / $${lastPriceUsd.toFixed(2)}`}
-        </span>
-      </div>
-    );
-  }
-);
-
-const ChangeCell: FC<IGridListCellProps<TokenPairInfo>> = observer((props) => {
-  const { change24h } = props.dataItem;
+const ChangeCellValue = observer(function ChangeCellValue(
+  props: TableCellValueProps<TokenPairInfo>
+) {
+  const { change24h } = props.row.data;
   return (
     <div
       className={cn(withBaseName("change"), {
@@ -105,25 +98,6 @@ const ChangeCell: FC<IGridListCellProps<TokenPairInfo>> = observer((props) => {
     </div>
   );
 });
-
-const gridListColumns: IGridListColumn<TokenPairInfo>[] = [
-  {
-    header: "Token pair",
-    cellComponent: TokenPairCell,
-    width: "130px",
-  },
-  {
-    header: "Last price",
-    cellComponent: LastPriceCell,
-    width: "auto",
-  },
-  {
-    header: "Change 24h",
-    cellComponent: ChangeCell,
-    textAlign: "right",
-    width: "auto",
-  },
-];
 
 export const TokenSelector: FC<ITokenSelectorProps> = observer((props) => {
   const rootStore = useStore();
@@ -154,9 +128,11 @@ export const TokenSelector: FC<ITokenSelectorProps> = observer((props) => {
 
   const buttonText = selectedTokenPair?.name || "Select Token";
 
-  const onRowClick = (rowIndex: number) => {
-    selectTokenPair(filteredPairs[rowIndex].tokenPair);
-    setIsOpen(false);
+  const onRowSelected = (rows: TokenPairInfo[]) => {
+    if (rows.length > 0) {
+      selectTokenPair(rows[0].tokenPair);
+      setIsOpen(false);
+    }
   };
 
   const IconComponent = isOpen ? ChevronUpIcon : ChevronDownIcon;
@@ -236,12 +212,32 @@ export const TokenSelector: FC<ITokenSelectorProps> = observer((props) => {
                   </FormField>
                 </FlexItem>
                 <FlexItem grow={1}>
-                  <GridList
-                    className={withBaseName("gridList")}
-                    data={filteredPairs}
-                    columns={gridListColumns}
-                    onRowClick={onRowClick}
-                  />
+                  <Table
+                    rowData={filteredPairs}
+                    className={withBaseName("table")}
+                    rowSelectionMode={"single"}
+                    onRowSelected={onRowSelected}
+                  >
+                    <TableColumn
+                      id={"tokenPair"}
+                      name={"Token pair"}
+                      cellValueComponent={TokenPairCellValue}
+                      defaultWidth={125}
+                    />
+                    <TableColumn
+                      id={"lastPrice"}
+                      name={"Last price"}
+                      cellValueComponent={LastPriceCellValue}
+                      defaultWidth={117}
+                    />
+                    <TableColumn
+                      id={"change24h"}
+                      name={"Change 24h"}
+                      cellValueComponent={ChangeCellValue}
+                      align={"right"}
+                      defaultWidth={85}
+                    />
+                  </Table>
                 </FlexItem>
               </FlexLayout>
             </Card>

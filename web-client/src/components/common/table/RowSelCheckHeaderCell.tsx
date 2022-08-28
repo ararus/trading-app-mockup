@@ -6,7 +6,7 @@ import "./RowSelCheckHeaderCell.css";
 
 const withBaseName = makePrefixer("uitkTableRowSelCheckHeaderCell");
 
-export const RowSelCheckHeaderCell = (props: HeaderCellProps) => {
+export function RowSelCheckHeaderCell<T>(props: HeaderCellProps<T>) {
   const { selectAll, unselectAll, isAllSelected, isAnySelected } =
     useSelectionContext();
 
@@ -28,4 +28,4 @@ export const RowSelCheckHeaderCell = (props: HeaderCellProps) => {
       </div>
     </AutoSizeHeaderCell>
   );
-};
+}

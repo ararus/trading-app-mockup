@@ -3,10 +3,8 @@ import { TableHeaderValueProps } from "./TableColumn";
 
 const withBaseName = makePrefixer("uitkTableHeaderCell");
 
-export const HeaderCellValue = function HeaderCellValue(
-  props: TableHeaderValueProps
-) {
+export function HeaderCellValue<T>(props: TableHeaderValueProps<T>) {
   const { column } = props;
   const title = column.info.props.name;
   return <span className={withBaseName("text")}>{title}</span>;
-};
+}

@@ -31,8 +31,8 @@ const sideValueGetter = ({ side }: OpenOrder) => {
   );
 };
 
-const TimeCellValue: FC<TableCellValueProps> = (props) => {
-  const time = props.value as Date;
+const TimeCellValue: FC<TableCellValueProps<OpenOrder>> = (props) => {
+  const time = props.value as any as Date;
   return (
     <div>
       {time.toLocaleTimeString(undefined, {
@@ -64,7 +64,7 @@ export const OpenOrders: FC<IOpenOrdersProps> = observer((props) => {
           id={"tokenPair"}
           name={"Token Pair"}
           defaultWidth={100}
-          getValue={(x) => x.tokenPair}
+          getValue={(x: OpenOrder) => x.tokenPair}
         />
         <TableColumn
           id={"side"}
@@ -84,20 +84,20 @@ export const OpenOrders: FC<IOpenOrdersProps> = observer((props) => {
           name={"Amount"}
           align={"right"}
           defaultWidth={100}
-          getValue={(x) => x.amount}
+          getValue={(x: OpenOrder) => x.amount}
         />
         <TableColumn
           id={"failed"}
           name={"Failed"}
           align={"right"}
           defaultWidth={100}
-          getValue={(x) => x.failed}
+          getValue={(x: OpenOrder) => x.failed}
         />
         <TableColumn
           id={"time"}
           name={"Time"}
           defaultWidth={100}
-          getValue={(x) => x.time}
+          getValue={(x: OpenOrder) => x.time}
           cellValueComponent={TimeCellValue}
         />
       </Table>

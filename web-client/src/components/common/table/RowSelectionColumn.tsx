@@ -2,9 +2,12 @@ import { RowSelCheckHeaderCell } from "./RowSelCheckHeaderCell";
 import { RowSelectionCheckboxCellValue } from "./RowSelectionCheckboxCellValue";
 import { TableColumn, TableColumnProps } from "./TableColumn";
 
-export type RowSelectionColumnProps = Omit<TableColumnProps, "width" | "name">;
+export type RowSelectionColumnProps<T> = Omit<
+  TableColumnProps<T>,
+  "width" | "name"
+>;
 
-export const RowSelectionColumn = (props: RowSelectionColumnProps) => {
+export function RowSelectionColumn<T>(props: RowSelectionColumnProps<T>) {
   return (
     <TableColumn
       {...props}
@@ -14,4 +17,4 @@ export const RowSelectionColumn = (props: RowSelectionColumnProps) => {
       pinned="left"
     />
   );
-};
+}

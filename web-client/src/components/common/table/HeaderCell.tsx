@@ -7,8 +7,8 @@ import { useSizingContext } from "./SizingContext";
 
 const withBaseName = makePrefixer("uitkTableHeaderCell");
 
-export interface HeaderCellProps {
-  column: TableColumnModel;
+export interface HeaderCellProps<T> {
+  column: TableColumnModel<T>;
   children: ReactNode;
 }
 
@@ -23,7 +23,7 @@ export function HeaderCellSeparator(props: HeaderCellSeparatorProps) {
   return <div className={className} />;
 }
 
-export function HeaderCell(props: HeaderCellProps) {
+export function HeaderCell<T>(props: HeaderCellProps<T>) {
   const { column, children } = props;
   const { separator } = column;
   const { onResizeHandleMouseDown } = useSizingContext();
@@ -54,7 +54,7 @@ export function HeaderCell(props: HeaderCellProps) {
   );
 }
 
-export function AutoSizeHeaderCell<T>(props: HeaderCellProps) {
+export function AutoSizeHeaderCell<T>(props: HeaderCellProps<T>) {
   const { column, children } = props;
   const { separator } = column;
   const valueContainerRef = useRef<HTMLDivElement>(null);

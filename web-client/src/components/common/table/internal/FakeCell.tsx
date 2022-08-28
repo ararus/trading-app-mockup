@@ -1,9 +1,9 @@
-import { FC } from "react";
 import { TableCellProps } from "../TableColumn";
 import "./FakeCell.css";
 
-export type FakeCellProps = Pick<TableCellProps, "row">;
-export const FakeCell: FC<FakeCellProps> = function FakeCell(props) {
+export type FakeCellProps<T> = Pick<TableCellProps<T>, "row">;
+
+export function FakeCell<T>(props: FakeCellProps<T>) {
   const { row } = props;
   return (
     <td
@@ -12,4 +12,4 @@ export const FakeCell: FC<FakeCellProps> = function FakeCell(props) {
       data-column-index={-1}
     />
   );
-};
+}

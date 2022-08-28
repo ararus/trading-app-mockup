@@ -7,6 +7,9 @@ body {
   --tam-positive-color-active: var(--uitk-color-green-400);
   --tam-negative-color: var(--uitk-color-red-600);
   --tam-negative-color-active: var(--uitk-color-red-400);
+
+  --tam-positive-background: var(--uitk-color-green-10);
+  --tam-negative-background: var(--uitk-color-red-10);
 }
 
 .uitk-dark {
@@ -14,6 +17,10 @@ body {
   --tam-positive-color-active: var(--uitk-color-green-20);
   --tam-negative-color: var(--uitk-color-red-50);
   --tam-negative-color-active: var(--uitk-color-red-20);
+
+  --tam-positive-background: var(--uitk-color-green-800);
+  --tam-negative-background: var(--uitk-color-red-800);
+
   color-scheme: dark;
 }
 

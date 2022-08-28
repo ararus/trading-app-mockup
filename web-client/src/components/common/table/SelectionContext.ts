@@ -7,9 +7,6 @@ export interface SelectionContext {
   selectRows: (rowIdx: number, shift: boolean, meta: boolean) => void;
   selectAll: () => void;
   unselectAll: () => void;
-  cursorRowKey: string | undefined;
-  cursorColKey: string | undefined;
-  moveCursor: (rowIdx: number, colIdx: number) => void;
 }
 
 export const SelectionContext = createContext<SelectionContext | undefined>(

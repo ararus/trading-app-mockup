@@ -12,8 +12,8 @@ export interface RightPartProps<T> {
   rightRef: RefObject<HTMLDivElement>;
   onWheel: WheelEventHandler<HTMLTableElement>;
   isRaised?: boolean;
-  columns: TableColumnModel[];
-  rows: TableRowModel[];
+  columns: TableColumnModel<T>[];
+  rows: TableRowModel<T>[];
   hoverOverRowKey?: string;
   setHoverOverRowKey: (key: string | undefined) => void;
   zebra?: boolean;
