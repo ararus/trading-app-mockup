@@ -296,7 +296,12 @@ export const Table = function <T>(props: TableProps<T>) {
   );
 
   const onWheel: WheelEventHandler<HTMLTableElement> = useCallback(
-    ({ deltaX, deltaY }) => {
+    (event) => {
+      let { deltaX, deltaY, shiftKey } = event;
+      if (shiftKey) {
+        deltaX = deltaY;
+        deltaY = 0;
+      }
       const s = scrollableRef.current;
       if (s) {
         s.scrollLeft += deltaX;
