@@ -1,9 +1,10 @@
 import "./HeaderCell.css";
-import { ReactNode, useLayoutEffect, useRef } from "react";
+import { MouseEventHandler, ReactNode, useLayoutEffect, useRef } from "react";
 import { makePrefixer } from "@jpmorganchase/uitk-core";
 import cn from "classnames";
 import { ColumnSeparatorType, TableColumnModel } from "./Table";
 import { useSizingContext } from "./SizingContext";
+import { useColumnDragContext } from "./ColumnDragContext";
 
 const withBaseName = makePrefixer("uitkTableHeaderCell");
 
@@ -28,6 +29,9 @@ export function HeaderCell<T>(props: HeaderCellProps<T>) {
   const { separator } = column;
   const { onResizeHandleMouseDown } = useSizingContext();
 
+  const { columnDnD, onColumnMoveHandleMouseDown } = useColumnDragContext();
+  const onMouseDown = columnDnD ? onColumnMoveHandleMouseDown : undefined;
+
   return (
     <th
       data-column-index={column.index}
@@ -38,6 +42,7 @@ export function HeaderCell<T>(props: HeaderCellProps<T>) {
         className={cn(withBaseName("valueContainer"), {
           [withBaseName("alignRight")]: column.info.props.align === "right",
         })}
+        onMouseDown={onMouseDown}
       >
         {children}
       </div>

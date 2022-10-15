@@ -1,14 +1,35 @@
 .uitkTableCellEditor {
   margin: 0;
   padding: 0;
-  height: 100%;
+  height: var(--uitkTable-rowHeight);
+  overflow: hidden;
+  position: relative;
+}
+
+.uitkTableCellEditor-inputContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+  border-style: dotted;
+  border-width: 2px;
+  border-color: var(--uitkTable-cursor-borderColor);
+  padding: 0;
 }
 
 .uitkTableCellEditor input {
-  width: 100%;
-  height: var(--uitkTable-rowHeight);
-  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   outline: none;
-  margin: 0;
-  border: dotted 2px var(--uitk-editable-borderColor-active);
+  border: none;
+  padding: 0 calc(var(--uitkTable-padding) - 2px);
+  font-size: var(--uitkTable-fontSize);
+  font-family: inherit;
+  background-color: var(--uitkTable-editableCell-background-active);
+  color: var(--uitkTable-editableCell-color-active);
 }

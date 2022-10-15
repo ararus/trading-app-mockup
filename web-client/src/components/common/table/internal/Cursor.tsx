@@ -1,3 +1,5 @@
+/* This is obsolete (most likely). TODO remove after review */
+
 import { FC } from "react";
 import "./Cursor.css";
 import { makePrefixer } from "@jpmorganchase/uitk-core";

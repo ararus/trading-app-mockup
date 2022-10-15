@@ -1,0 +1,117 @@
+<module name="ExampleModule1">
+    <dtos>
+        <dto name="ITokenPair">
+            <fields>
+                <field name="baseToken">
+                    <type>string</type>
+                </field>
+                <field name="quoteToken">
+                    <type>string</type>
+                </field>
+            </fields>
+        </dto>
+        <dto name="ITokenPrice">
+            <fields>
+                <field name="token">
+                    <type>string</type>
+                </field>
+                <field name="priceUsd">
+                    <type>number</type>
+                </field>
+            </fields>
+        </dto>
+        <dto name="IPriceLevel">
+            <fields>
+                <field name="price">
+                    <type>number</type>
+                </field>
+                <field name="amount">
+                    <type>number</type>
+                </field>
+                <field name="total">
+                    <type>number</type>
+                </field>
+            </fields>
+        </dto>
+        <dto name="IOrderBook">
+            <fields>
+                <field name="buyLevels">
+                    <type>IPriceLevel[]</type>
+                </field>
+                <field name="sellLevels">
+                    <type>IPriceLevel[]</type>
+                </field>
+                <field name="lastPrice">
+                    <type>number</type>
+                </field>
+                <field name="lastPriceUsd">
+                    <type>number</type>
+                </field>
+                <field name="change">
+                    <type>number</type>
+                </field>
+            </fields>
+        </dto>
+        <dto name="IOpenOrder">
+            <fields>
+                <field name="id">
+                    <type>string</type>
+                </field>
+                <field name="tokenPair">
+                    <type>string</type>
+                </field>
+                <field name="side">
+                    <type>string</type>
+                </field>
+                <field name="amount">
+                    <type>number</type>
+                </field>
+                <field name="failed">
+                    <type>number</type>
+                </field>
+                <field name="price">
+                    <type>number</type>
+                </field>
+                <field name="time">
+                    <type>string</type>
+                </field>
+            </fields>
+        </dto>
+        <dto name="IOpenOrders">
+            <fields>
+                <field name="items">
+                    <type>IOpenOrder[]</type>
+                </field>
+            </fields>
+        </dto>
+    </dtos>
+
+    <services>
+        <service name="DummyService">
+            <functions>
+                <function name="getTokenPairs">
+                    <returnType>string[]</returnType>
+                </function>
+                <function name="getPriceStream">
+                    <returnType>ITokenPrice[]</returnType>
+                </function>
+                <function name="getOrderBook">
+                    <parameters>
+                        <parameter name="tokenPair">
+                            <type>string</type>
+                        </parameter>
+                        <parameter name="priceLevelSize">
+                            <type>number</type>
+                        </parameter>
+                    </parameters>
+                    <returnType>
+                        IOrderBook
+                    </returnType>
+                </function>
+                <function name="getOpenOrders">
+                    <returnType>IOpenOrders</returnType>
+                </function>
+            </functions>
+        </service>
+    </services>
+</module>

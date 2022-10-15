@@ -1,7 +1,9 @@
 import React, {
   Children,
   isValidElement,
+  MouseEventHandler,
   ReactNode,
+  RefObject,
   useCallback,
   useMemo,
   useRef,
@@ -683,4 +685,216 @@ export function useRowSelection<T>(
   );
 
   return selectionContext;
+}
+
+export interface ColumnDragState {
+  columnIndex: number;
+  x: number;
+  y: number;
+}
+
+const COLUMN_DRAG_TOLERANCE = 10;
+
+export interface Target {
+  columnIndex: number;
+  x: number;
+}
+
+export function useColumnMove<T = any>(
+  columnDnD: boolean | undefined,
+  rootRef: RefObject<HTMLDivElement>,
+  leftCols: TableColumnModel<T>[],
+  midCols: TableColumnModel<T>[],
+  rightCols: TableColumnModel<T>[],
+  scrollLeft: number,
+  clientMidWidth: number,
+  onColumnMove: (fromIndex: number, toIndex: number) => void
+) {
+  const moveRef = useRef<{
+    unsubscribe: () => void;
+    startScreenX: number;
+    startScreenY: number;
+    startHeaderX: number;
+    startHeaderY: number;
+
+    columnIndex: number;
+    dragTriggered: boolean;
+    onColumnMove: (fromIndex: number, toIndex: number) => void;
+  }>();
+
+  const activeTargetRef = useRef<Target | undefined>(undefined);
+
+  const [dragState, setDragState] = useState<ColumnDragState | undefined>(
+    undefined
+  );
+
+  const columnDragStart = useCallback(
+    (columnIndex: number, x: number, y: number) => {
+      setDragState({ columnIndex, x, y });
+    },
+    [setDragState]
+  );
+
+  const columnDrag = useCallback(
+    (x: number, y: number) => {
+      setDragState((old) => {
+        return { ...old!, x, y };
+      });
+    },
+    [setDragState]
+  );
+
+  const columnDrop = useCallback(() => {
+    const toIndex = activeTargetRef.current?.columnIndex;
+    const fromIndex = moveRef.current?.columnIndex;
+    const handler = moveRef.current?.onColumnMove;
+    if (
+      toIndex !== undefined &&
+      fromIndex !== undefined &&
+      handler !== undefined
+    ) {
+      handler(fromIndex, toIndex);
+    }
+    setDragState(undefined);
+  }, [setDragState]);
+
+  const onMouseUp = useCallback(() => {
+    if (moveRef.current?.dragTriggered) {
+      columnDrop();
+    }
+    moveRef.current?.unsubscribe();
+    moveRef.current = undefined;
+  }, [columnDrop]);
+
+  const onMouseMove = useCallback(
+    (event: MouseEvent) => {
+      const {
+        columnIndex,
+        startHeaderX,
+        startHeaderY,
+        startScreenX,
+        startScreenY,
+        dragTriggered,
+      } = moveRef.current!;
+
+      const shiftX = event.screenX - startScreenX;
+      const shiftY = event.screenY - startScreenY;
+      const x = startHeaderX + shiftX;
+      const y = startHeaderY + shiftY;
+
+      if (!dragTriggered) {
+        if (
+          Math.sqrt(shiftX * shiftX + shiftY * shiftY) > COLUMN_DRAG_TOLERANCE
+        ) {
+          moveRef.current!.dragTriggered = true;
+          columnDragStart(columnIndex, x, y);
+        }
+      } else {
+        columnDrag(x, y);
+      }
+    },
+    [columnDrag]
+  );
+
+  const onColumnMoveHandleMouseDown: MouseEventHandler<HTMLDivElement> =
+    useCallback(
+      (event) => {
+        const [columnIndexAttribute, thElement] = getAttribute(
+          event.target as HTMLElement,
+          "data-column-index"
+        );
+        const rootElement = rootRef.current!;
+
+        document.addEventListener("mouseup", onMouseUp);
+        document.addEventListener("mousemove", onMouseMove);
+
+        const columnIndex = parseInt(columnIndexAttribute, 10);
+
+        const thRect = thElement.getBoundingClientRect();
+        const rootRect = rootElement!.getBoundingClientRect();
+
+        const x = thRect.x - rootRect.x;
+        const y = thRect.y - rootRect.y;
+
+        moveRef.current = {
+          unsubscribe: () => {
+            document.removeEventListener("mouseup", onMouseUp);
+            document.removeEventListener("mousemove", onMouseMove);
+          },
+          startScreenX: event.screenX,
+          startScreenY: event.screenY,
+          startHeaderX: x,
+          startHeaderY: y,
+          columnIndex,
+          dragTriggered: false,
+          onColumnMove,
+        };
+
+        event.preventDefault();
+      },
+      [columnDragStart]
+    );
+
+  const targets = useMemo(() => {
+    if (!dragState) {
+      return undefined;
+    }
+    let ts: Target[] = [];
+    let x = 0;
+    leftCols.forEach((c, i) => {
+      ts.push({ columnIndex: c.index, x });
+      x += c.info.width;
+    });
+    let w = scrollLeft;
+    let i = 0;
+    while (w > 0 && i < midCols.length) {
+      w -= midCols[i].info.width;
+      i++;
+    }
+    x -= w;
+    w += clientMidWidth;
+    while (w > 0 && i < midCols.length) {
+      const c = midCols[i];
+      ts.push({ columnIndex: c.index, x });
+      x += c.info.width;
+      w -= c.info.width;
+      i++;
+    }
+    if (rightCols.length > 0) {
+      x += w;
+      rightCols.forEach((c, i) => {
+        ts.push({ columnIndex: c.index, x });
+        x += c.info.width;
+      });
+      ts.push({ columnIndex: last(rightCols).index + 1, x });
+    } else {
+      ts.push({ columnIndex: last(midCols).index + 1, x });
+    }
+    return ts;
+  }, [dragState, leftCols, midCols, rightCols, scrollLeft, clientMidWidth]);
+
+  const activeTargetIdx = useMemo(() => {
+    const x = dragState?.x;
+    if (x === undefined || targets === undefined || targets.length < 1) {
+      return undefined;
+    }
+    let i = 0;
+    while (i < targets.length && targets[i].x < x) {
+      i++;
+    }
+    if (i === 0) {
+      return 0;
+    }
+    if (i >= targets.length) {
+      return targets.length - 1;
+    }
+    return targets[i].x - x < x - targets[i - 1].x ? i : i - 1;
+  }, [targets, dragState?.x]);
+
+  const activeTarget =
+    activeTargetIdx === undefined ? undefined : targets![activeTargetIdx];
+
+  activeTargetRef.current = activeTarget;
+
+  return { onColumnMoveHandleMouseDown, dragState, activeTarget };
 }

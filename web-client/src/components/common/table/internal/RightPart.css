@@ -20,7 +20,6 @@
 }
 
 .uitkTableRightPart table {
-  border-spacing: var(--uitkTable-borderSpacing);
   table-layout: fixed;
   position: absolute;
 

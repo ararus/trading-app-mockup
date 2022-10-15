@@ -12,6 +12,7 @@ export interface SelectionContext {
 export const SelectionContext = createContext<SelectionContext | undefined>(
   undefined
 );
+
 export const useSelectionContext = () => {
   const c = useContext(SelectionContext);
   if (!c) {

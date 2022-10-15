@@ -10,7 +10,6 @@ import * as uuid from "uuid";
 import { WebSocket } from "ws";
 import { DummyServer } from "./fakeData";
 import { Subscription } from "rxjs";
-import { IStreamReply, IStreamRequest } from "./dtos";
 
 const koaValidator = require("koa-async-validator");
 
@@ -55,61 +54,20 @@ app.ws.use(
         if (message.type === "unsubscribe") {
           client.subscriptions.get(message.key)!.unsubscribe();
         } else {
-          if (message.name === "tokenPairs") {
-            client.subscriptions.set(
-              message.key,
-              dummy.getTokenPairs().subscribe((tokenPairs) => {
-                ctx.websocket.send(
-                  JSON.stringify({
-                    type: "tokenPairs",
-                    key: message.key,
-                    data: tokenPairs,
-                  })
-                );
-              })
-            );
-          } else if (message.name === "tokenPrices") {
-            client.subscriptions.set(
-              message.key,
-              dummy.getPriceStream().subscribe((prices) => {
-                ctx.websocket.send(
-                  JSON.stringify({
-                    type: "tokenPrices",
-                    key: message.key,
-                    data: prices,
-                  })
-                );
-              })
-            );
-          } else if (message.name === "orderBook") {
-            client.subscriptions.set(
-              message.key,
-              dummy.getOrderBook
-                .apply(dummy, message.data)
-                .subscribe((orderBook) => {
-                  ctx.websocket.send(
-                    JSON.stringify({
-                      type: "orderBook",
-                      key: message.key,
-                      data: orderBook,
-                    })
-                  );
+          const f = dummy[message.name as keyof DummyServer] as any;
+          const s = message.data ? f.apply(dummy, message.data) : f.call(dummy);
+          client.subscriptions.set(
+            message.key,
+            s.subscribe((data: any) => {
+              ctx.websocket.send(
+                JSON.stringify({
+                  type: message.name,
+                  key: message.key,
+                  data,
                 })
-            );
-          } else if (message.name === "openOrders") {
-            client.subscriptions.set(
-              message.key,
-              dummy.getOpenOrders().subscribe((openOrders) => {
-                ctx.websocket.send(
-                  JSON.stringify({
-                    type: "openOrders",
-                    key: message.key,
-                    data: openOrders,
-                  })
-                );
-              })
-            );
-          }
+              );
+            })
+          );
         }
       });
 

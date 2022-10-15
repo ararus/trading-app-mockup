@@ -1,12 +1,13 @@
+import { mainTokens, tokens } from "./data/tokens";
+import { from, map, Observable, share, tap, timer } from "rxjs";
 import {
+  IDummyService,
+  IOpenOrders,
+  IOrderBook,
+  IPriceLevel,
   ITokenPair,
   ITokenPrice,
-  IPriceLevel,
-  IOrderBook,
-  IOpenOrders,
-} from "./dtos";
-import { mainTokens, tokens } from "./data/tokens";
-import { from, interval, map, Observable, share, tap, timer } from "rxjs";
+} from "./generated/ExampleModule1";
 
 function makePairs() {
   const pairs: ITokenPair[] = [];
@@ -44,7 +45,7 @@ function randomShift(max: number) {
   return Math.random() * max * 2 - max;
 }
 
-export class DummyServer {
+export class DummyServer implements IDummyService {
   private _tokenPairs: ITokenPair[] = makePairs();
   private _tokenPrices: Map<string, ITokenPrice>;
   private _maxPriceShift = 100;

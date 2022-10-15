@@ -1,0 +1,8 @@
+.uitkTableColumnDropTarget {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--uitkTable-columnDropTarget-color);
+  z-index: 3;
+}

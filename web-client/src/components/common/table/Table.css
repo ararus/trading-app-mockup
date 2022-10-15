@@ -194,8 +194,7 @@
 }
 
 .uitkTable {
-  --uitkTable-cell-padding: 0 var(--uitkTable-padding) 0 var(--uitkTable-padding);
-  --uitkTable-borderSpacing: 1px;
+  --uitkTable-cell-padding: 0 var(--uitkTable-padding);
 
   --uitkTable-rowHover-zIndex: 1;
   --uitkTable-cell-zIndex: 2;
@@ -209,9 +208,12 @@
   --uitkTable-row-backgroundColor-hover: var(--uitk-color-blue-10);
   --uitkTable-row-backgroundColor-selected: var(--uitk-color-blue-30);
 
-  --uitkTable-row-borderColor-selected: var(--uitk-color-blue-50);
+  --uitkTable-row-borderColor-selected: var(--uitk-color-blue-500);
   --uitkTable-cell-backgroundColor-selected: #64b1e4;
-  --uitkTable-editableCell-borderColor: var(--uitk-color-grey-900);
+  --uitkTable-editableCell-borderColor: var(--uitk-color-grey-100);
+  --uitkTable-editableCell-borderColor-hover: var(--uitk-color-blue-500);
+  --uitkTable-editableCell-background-active: var(--uitk-color-white);
+  --uitkTable-editableCell-color-active: var(--uitk-color-grey-900);
   /*--uitkTable-header-borderColor: var(--uitk-color-grey-90);*/
 
   --uitkTable-header-color: var(--uitk-color-grey-300);
@@ -236,12 +238,15 @@
   --uitkTable-backgroundColor-secondary: #2f3136;
   --uitkTable-zebraColor: rgba(255, 255, 255, .05);
 
-  --uitkTable-row-backgroundColor-hover: rgb(12, 53, 102);
-  --uitkTable-row-backgroundColor-selected: rgb(0, 40, 88);
+  --uitkTable-row-backgroundColor-hover: var(--uitk-color-blue-900);
+  --uitkTable-row-backgroundColor-selected: var(--uitk-color-blue-800);
 
-  --uitkTable-row-borderColor-selected: #4b9fd8;
+  --uitkTable-row-borderColor-selected: var(--uitk-color-blue-300);
   --uitkTable-cell-backgroundColor-selected: #64b1e4;
-  --uitkTable-editableCell-borderColor: var(--uitk-color-grey-80);
+  --uitkTable-editableCell-borderColor: var(--uitk-color-grey-200);
+  --uitkTable-editableCell-borderColor-hover: var(--uitk-color-blue-300);
+  --uitkTable-editableCell-background-active: var(--uitk-color-grey-800);
+  --uitkTable-editableCell-color-active: var(--uitk-color-white);
   /*--uitkTable-header-borderColor: var(--uitk-color-grey-100);*/
 
   --uitkTable-header-color: var(--uitk-color-grey-50);

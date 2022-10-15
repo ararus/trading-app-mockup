@@ -1,7 +1,7 @@
 import { action, autorun, computed, makeObservable, observable } from "mobx";
 import { RootStore } from "./RootStore";
-import { ServerApi } from "./ServerApi";
 import { Subscription, take } from "rxjs";
+import { DummyService } from "../api/generated/ExampleModule1";
 
 class AutoSub {
   private _sub?: Subscription;
@@ -22,7 +22,9 @@ class AutoSub {
 export class ConnectionStore {
   private readonly _isConnected = observable.box<boolean>(false);
   private readonly _rootStore: RootStore;
-  private _serverApi: ServerApi = new ServerApi();
+  private _serverApi: DummyService = new DummyService(
+    "ws://localhost:3000/api/ws"
+  );
 
   private _pricesSub = new AutoSub();
   private _orderBookSub = new AutoSub();

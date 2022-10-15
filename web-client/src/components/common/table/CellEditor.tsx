@@ -23,11 +23,14 @@ export const CellEditor: FC<CellEditorProps> = (props) => {
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key === "Enter") {
       endEditMode();
+      event.preventDefault();
+      event.stopPropagation();
     }
     if (event.key === "Escape") {
       cancelEditMode();
+      event.preventDefault();
+      event.stopPropagation();
     }
-    event.stopPropagation();
   };
 
   const onBlur: FocusEventHandler<HTMLInputElement> = (event) => {
@@ -36,14 +39,21 @@ export const CellEditor: FC<CellEditorProps> = (props) => {
   };
 
   return (
-    <td className={withBaseName()}>
-      <input
-        autoFocus={true}
-        value={editorText}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        onBlur={onBlur}
-      />
+    <td
+      // data-row-index={row.index}
+      // data-column-index={column.index}
+      // aria-colindex={column.index}
+      className={withBaseName()}
+    >
+      <div className={withBaseName("inputContainer")}>
+        <input
+          autoFocus={true}
+          value={editorText}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          onBlur={onBlur}
+        />
+      </div>
     </td>
   );
 };

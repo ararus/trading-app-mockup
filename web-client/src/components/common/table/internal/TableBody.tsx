@@ -35,13 +35,17 @@ export function TableBody<T>(props: TableBodyProps<T>) {
 
   const onMouseDown: MouseEventHandler<HTMLTableSectionElement> = (event) => {
     const target = event.target as HTMLElement;
-    const [rowIdx, colIdx] = getCellPosition(target);
-    selectRows(rowIdx, event.shiftKey, event.metaKey || event.ctrlKey);
-    if (colIdx >= 0) {
-      moveCursor(rowIdx, colIdx);
+    try {
+      const [rowIdx, colIdx] = getCellPosition(target);
+      selectRows(rowIdx, event.shiftKey, event.metaKey || event.ctrlKey);
+      if (colIdx >= 0) {
+        moveCursor(rowIdx, colIdx);
+      }
+      event.preventDefault();
+      event.stopPropagation();
+    } catch (e) {
+      // TODO Do editors need any keyboard handling from the table body?
     }
-    event.preventDefault();
-    event.stopPropagation();
   };
 
   const onDoubleClick: MouseEventHandler<HTMLTableSectionElement> = (event) => {

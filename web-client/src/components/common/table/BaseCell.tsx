@@ -3,7 +3,6 @@ import "./BaseCell.css";
 import { makePrefixer } from "@jpmorganchase/uitk-core";
 import { TableCellProps } from "./TableColumn";
 import { TableColumnModel } from "./Table";
-import { Cursor } from "./internal";
 
 const withBaseName = makePrefixer("uitkTableBaseCell");
 
@@ -20,17 +19,17 @@ export function BaseCell<T>(props: TableCellProps<T>) {
       data-column-index={column.index}
       aria-colindex={column.index}
       role="gridcell"
-      className={cn(
-        withBaseName(),
-        {
-          [withBaseName("editable")]: column.info.props.editable,
-        },
-        className
-      )}
+      className={cn(withBaseName(), className)}
       style={style}
     >
-      {isFocused ? <Cursor /> : null}
-      <div className={withBaseName("valueContainer")}>{children}</div>
+      <div
+        className={cn(withBaseName("valueContainer"), {
+          [withBaseName("focused")]: isFocused,
+          [withBaseName("editable")]: !isFocused && column.info.props.editable,
+        })}
+      >
+        {children}
+      </div>
     </td>
   );
 }

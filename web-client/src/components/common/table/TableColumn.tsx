@@ -34,7 +34,7 @@ export interface TableEditorProps {
   // TODO
 }
 
-export interface TableColumnProps<T> {
+export interface TableColumnProps<T = any> {
   id: string;
   name?: string;
   defaultWidth?: number;
@@ -58,7 +58,7 @@ export interface TableColumnInfo<T> {
   props: TableColumnProps<T>;
 }
 
-export function TableColumn<T>(props: TableColumnProps<T>) {
+export function TableColumn<T = any>(props: TableColumnProps<T>) {
   const { defaultWidth } = props;
   const [width, setWidth] = useState<number>(
     defaultWidth !== undefined ? defaultWidth : 100
